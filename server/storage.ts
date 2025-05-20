@@ -3,8 +3,12 @@ import {
   InsertUser, 
   EmvCalculation, 
   EmvParameters,
-  EmvResult 
+  EmvResult,
+  users,
+  emvCalculations
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 // Extend the storage interface with methods for EMV calculations
 export interface IStorage {
@@ -16,61 +20,52 @@ export interface IStorage {
   getEmvCalculation(id: number): Promise<EmvCalculation | undefined>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private emvCalculations: Map<number, EmvCalculation>;
-  private currentUserId: number;
-  private currentEmvCalcId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.emvCalculations = new Map();
-    this.currentUserId = 1;
-    this.currentEmvCalcId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   async saveEmvCalculation(userId: string, parameters: EmvParameters, result: EmvResult): Promise<EmvCalculation> {
-    const id = this.currentEmvCalcId++;
-    const date = new Date();
-    
-    const calculation: EmvCalculation = {
-      id,
-      userId,
-      date,
-      parameters,
-      result
-    };
-    
-    this.emvCalculations.set(id, calculation);
+    const [calculation] = await db
+      .insert(emvCalculations)
+      .values({
+        userId,
+        parameters,
+        result
+      })
+      .returning();
     return calculation;
   }
 
   async getEmvCalculationsByUser(userId: string): Promise<EmvCalculation[]> {
-    return Array.from(this.emvCalculations.values())
-      .filter(calc => calc.userId === userId)
-      .sort((a, b) => b.date.getTime() - a.date.getTime()); // Sort by date, newest first
+    return db
+      .select()
+      .from(emvCalculations)
+      .where(eq(emvCalculations.userId, userId))
+      .orderBy({ column: emvCalculations.date, order: 'desc' });
   }
 
   async getEmvCalculation(id: number): Promise<EmvCalculation | undefined> {
-    return this.emvCalculations.get(id);
+    const [calculation] = await db
+      .select()
+      .from(emvCalculations)
+      .where(eq(emvCalculations.id, id));
+    return calculation || undefined;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

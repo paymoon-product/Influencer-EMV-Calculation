@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import EMVReferencePage from "@/pages/EMVReferencePage";
 import EMVSettingsPage from "@/pages/EMVSettingsPage";
+import EMVHistoryPage from "@/pages/EMVHistoryPage";
 
 function Router() {
   return (
@@ -14,6 +15,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/reference" component={EMVReferencePage} />
       <Route path="/settings" component={EMVSettingsPage} />
+      <Route path="/history" component={EMVHistoryPage} />
       <Route component={NotFound} />
     </Switch>
   );

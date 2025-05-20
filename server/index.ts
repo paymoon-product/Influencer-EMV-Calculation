@@ -1,10 +1,35 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import session from "express-session";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Set up session middleware
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "aspire-emv-calculator-secret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { 
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 1000 * 60 * 60 * 24 // 24 hours
+    }
+  })
+);
+
+// For demo purposes, create a mock user session if it doesn't exist
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (!req.session.user) {
+    req.session.user = {
+      id: "demo-user-1",
+      username: "demo_user"
+    };
+  }
+  next();
+});
 
 app.use((req, res, next) => {
   const start = Date.now();
