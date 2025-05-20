@@ -5,11 +5,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
+import EMVReferencePage from "@/pages/EMVReferencePage";
+import EMVSettingsPage from "@/pages/EMVSettingsPage";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/reference" component={EMVReferencePage} />
+      <Route path="/settings" component={EMVSettingsPage} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -1,12 +1,30 @@
 import { emvData, FormValues, EMVResult, EMVBreakdownItem } from "./emv-data";
 
+// Get user-customized factors or use defaults from emvData
+function getCustomizedFactors() {
+  // Try to get customized factors from localStorage
+  const savedCreatorFactors = localStorage.getItem("emv-creator-factors");
+  const savedPostTypeFactors = localStorage.getItem("emv-post-type-factors");
+  const savedTopicFactors = localStorage.getItem("emv-topic-factors");
+  
+  // Return an object with either customized factors or defaults
+  return {
+    creatorFactors: savedCreatorFactors ? JSON.parse(savedCreatorFactors) : emvData.creatorFactors,
+    postTypeFactors: savedPostTypeFactors ? JSON.parse(savedPostTypeFactors) : emvData.postTypeFactors,
+    topicFactors: savedTopicFactors ? JSON.parse(savedTopicFactors) : emvData.topicFactors
+  };
+}
+
 export function calculateEMV(values: FormValues): EMVResult {
   const { platform, postType, creatorSize, contentTopic } = values;
+  
+  // Get customized factors or defaults
+  const customFactors = getCustomizedFactors();
 
   // Get adjustment factors
-  const creatorFactor = emvData.creatorFactors[creatorSize as keyof typeof emvData.creatorFactors];
-  const postTypeFactor = emvData.postTypeFactors[`${platform}_${postType}` as keyof typeof emvData.postTypeFactors];
-  const topicFactor = emvData.topicFactors[contentTopic as keyof typeof emvData.topicFactors];
+  const creatorFactor = customFactors.creatorFactors[creatorSize as keyof typeof customFactors.creatorFactors];
+  const postTypeFactor = customFactors.postTypeFactors[`${platform}_${postType}` as keyof typeof customFactors.postTypeFactors];
+  const topicFactor = customFactors.topicFactors[contentTopic as keyof typeof customFactors.topicFactors];
 
   let totalEMV = 0;
   const breakdown: EMVBreakdownItem[] = [];
