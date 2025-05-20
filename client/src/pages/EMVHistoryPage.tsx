@@ -33,9 +33,7 @@ export default function EMVHistoryPage() {
     const fetchCalculations = async () => {
       try {
         setLoading(true);
-        const response = await apiRequest("/api/emv/history", {
-          method: "GET",
-        });
+        const response = await apiRequest("GET", "/api/emv/history");
         
         if (response.ok) {
           const data = await response.json();

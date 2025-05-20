@@ -56,7 +56,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(emvCalculations)
       .where(eq(emvCalculations.userId, userId))
-      .orderBy({ column: emvCalculations.date, order: 'desc' });
+      .orderBy(emvCalculations.date);
   }
 
   async getEmvCalculation(id: number): Promise<EmvCalculation | undefined> {
