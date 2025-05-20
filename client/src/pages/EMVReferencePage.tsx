@@ -20,17 +20,7 @@ export default function EMVReferencePage() {
             </Link>
           </div>
           <h1 className="text-xl font-semibold text-primary-900">EMV Reference Guide</h1>
-          <div>
-            <a 
-              href="https://docs.google.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="inline-flex items-center space-x-1 px-4 py-2 rounded-md font-medium text-sm bg-secondary-100 text-secondary-700 hover:bg-secondary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500"
-            >
-              <ExternalLink className="h-4 w-4" />
-              <span>Documentation</span>
-            </a>
-          </div>
+          <div></div>
         </div>
       </header>
 

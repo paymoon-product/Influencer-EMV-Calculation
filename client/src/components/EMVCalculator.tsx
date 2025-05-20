@@ -82,9 +82,6 @@ export function EMVCalculator() {
           <EMVResults results={results} isSaving={isSaving} />
         </div>
       </div>
-
-      {/* Reference Card */}
-      <EMVReference />
     </div>
   );
 }

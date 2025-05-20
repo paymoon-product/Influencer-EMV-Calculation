@@ -132,12 +132,8 @@ export function EMVReference() {
   return (
     <Card>
       <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-4">
+        <div className="mb-4">
           <h3 className="text-lg font-semibold text-primary-900">EMV Reference Values</h3>
-          <Button variant="ghost" size="sm" onClick={handleDownload} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">
-            <ArrowDownToLine className="h-4 w-4 mr-1" />
-            Download Full Reference
-          </Button>
         </div>
 
         <div className="overflow-x-auto">

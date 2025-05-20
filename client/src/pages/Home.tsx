@@ -19,6 +19,15 @@ export default function Home() {
             <h1 className="text-xl font-semibold text-primary-900">Aspire EMV Calculator</h1>
           </div>
           <div className="flex items-center space-x-2">
+            <Link href="/bulk">
+              <Button variant="outline" size="sm" className="flex items-center space-x-1">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                <span>Bulk Calculation</span>
+              </Button>
+            </Link>
+
             <Link href="/settings">
               <Button variant="ghost" size="sm" className="flex items-center space-x-1">
                 <Settings className="h-4 w-4" />
@@ -39,17 +48,6 @@ export default function Home() {
                     <BookOpen className="h-4 w-4 mr-2" />
                     <span>EMV Reference Guide</span>
                   </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <a 
-                    href="https://docs.google.com" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="flex items-center w-full"
-                  >
-                    <HelpCircle className="h-4 w-4 mr-2" />
-                    <span>Documentation</span>
-                  </a>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
