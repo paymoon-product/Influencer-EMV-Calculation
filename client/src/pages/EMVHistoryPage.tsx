@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, FileDown, Eye, Calendar } from "lucide-react";
+import { 
+  ArrowLeft, FileDown, Eye, Calendar, Sliders, 
+  Settings, BookOpen, Clock
+} from "lucide-react";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -14,6 +17,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -121,28 +130,52 @@ export default function EMVHistoryPage() {
       <header className="bg-white border-b border-primary-200 py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <Link href="/">
-              <Button variant="ghost" size="sm" className="flex items-center space-x-1">
-                <ArrowLeft className="h-4 w-4" />
-                <span>Back to Calculator</span>
-              </Button>
-            </Link>
+            <img src="/attached_assets/icon.png" alt="Aspire Logo" className="h-6 w-6" />
+            <h1 className="text-xl font-semibold text-primary-900">Aspire EMV Calculator</h1>
           </div>
-          <h1 className="text-xl font-semibold text-primary-900">EMV Calculation History</h1>
-          <div>
-            <Button
-              onClick={handleExport}
-              disabled={calculations.length === 0}
-              variant="outline"
-              size="sm"
-              className="flex items-center space-x-1"
-            >
-              <FileDown className="h-4 w-4" />
-              <span>Export All</span>
-            </Button>
+          <div className="flex items-center space-x-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center space-x-1">
+                  <Sliders className="h-4 w-4" />
+                  <span>Options</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <Link href="/settings" className="flex items-center w-full">
+                    <Settings className="h-4 w-4 mr-2" />
+                    <span>Settings</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/reference" className="flex items-center w-full">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    <span>EMV Reference Guide</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/changelog" className="flex items-center w-full">
+                    <Clock className="h-4 w-4 mr-2" />
+                    <span>Change Log</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
+      
+      <div className="bg-gray-50 py-2 px-6 border-b border-gray-200">
+        <div className="container mx-auto flex items-center">
+          <Link href="/">
+            <Button variant="ghost" size="sm" className="flex items-center space-x-1 text-gray-600">
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to Calculator</span>
+            </Button>
+          </Link>
+        </div>
+      </div>
 
       <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="container mx-auto">
@@ -244,6 +277,20 @@ export default function EMVHistoryPage() {
                       </TableBody>
                     </Table>
                   </div>
+                  
+                  {calculations.length > 0 && (
+                    <div className="mt-6 flex justify-end">
+                      <Button
+                        onClick={handleExport}
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center space-x-1"
+                      >
+                        <FileDown className="h-4 w-4 mr-1" />
+                        <span>Export All</span>
+                      </Button>
+                    </div>
+                  )}
                 </>
               )}
             </CardContent>
