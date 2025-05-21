@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
   ArrowLeft, Save, RotateCcw, Plus, Trash2, Users, Layout,
-  BookOpen, PenTool, Settings, Clock
+  BookOpen, PenTool, Settings, Clock, CloudLightning
 } from "lucide-react";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
@@ -38,6 +38,8 @@ import {
   DialogTitle,
   DialogFooter
 } from "@/components/ui/dialog";
+import { AppHeader } from "@/components/AppHeader";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 export default function EMVSettingsPage() {
   const { toast } = useToast();
@@ -242,20 +244,8 @@ export default function EMVSettingsPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="bg-white border-b border-primary-200 py-4 px-6">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <Link href="/">
-              <Button variant="ghost" size="sm" className="flex items-center space-x-1">
-                <ArrowLeft className="h-4 w-4" />
-                <span>Back to Calculator</span>
-              </Button>
-            </Link>
-          </div>
-          <h1 className="text-xl font-semibold text-primary-900">EMV Settings</h1>
-          <div></div>
-        </div>
-      </header>
+      <AppHeader />
+      <Breadcrumb backTo="/" label="Back to Calculator" />
 
       <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="container mx-auto">
