@@ -168,12 +168,12 @@ export function EMVForm({ onSubmit }: EMVFormProps) {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="brand_fan">Brand Fan (1K-2.5K)</SelectItem>
-                      <SelectItem value="nano">Nano (2.5K-25K)</SelectItem>
-                      <SelectItem value="micro">Micro (25K-60K)</SelectItem>
-                      <SelectItem value="mid_tier">Mid-tier (60K-100K)</SelectItem>
-                      <SelectItem value="macro">Macro (100K-1M)</SelectItem>
-                      <SelectItem value="celebrity">Celebrity (1M+)</SelectItem>
+                      <SelectItem value="brand_fan">Brand Fan (up to 2.5K followers)</SelectItem>
+                      <SelectItem value="nano">Nano Creator (2.5K-25K followers)</SelectItem>
+                      <SelectItem value="micro">Micro Creator (25K-60K followers)</SelectItem>
+                      <SelectItem value="mid_tier">Mid-Tier Creator (60K-100K followers)</SelectItem>
+                      <SelectItem value="macro">Macro Creator (100K-1M followers)</SelectItem>
+                      <SelectItem value="celebrity">Celebrity Creator (1M+ followers)</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormItem>

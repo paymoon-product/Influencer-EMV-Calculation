@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Clock, Settings, RotateCcw } from "lucide-react";
+import { ArrowLeft, Clock, Settings, RotateCcw, CloudLightning, Sliders, BookOpen } from "lucide-react";
 import { Link } from "wouter";
 import { 
   Table, 
@@ -11,6 +11,12 @@ import {
   TableBody, 
   TableCell 
 } from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 type ChangeLogEntry = {
   id: string;
