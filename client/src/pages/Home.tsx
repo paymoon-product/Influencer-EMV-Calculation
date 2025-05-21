@@ -28,21 +28,20 @@ export default function Home() {
               </Button>
             </Link>
 
-            <Link href="/settings">
-              <Button variant="ghost" size="sm" className="flex items-center space-x-1">
-                <Settings className="h-4 w-4" />
-                <span>Settings</span>
-              </Button>
-            </Link>
-            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="flex items-center space-x-1">
-                  <HelpCircle className="h-4 w-4" />
-                  <span>Help</span>
+                  <Settings className="h-4 w-4" />
+                  <span>General</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <Link href="/settings" className="flex items-center w-full">
+                    <Settings className="h-4 w-4 mr-2" />
+                    <span>Settings</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Link href="/reference" className="flex items-center w-full">
                     <BookOpen className="h-4 w-4 mr-2" />

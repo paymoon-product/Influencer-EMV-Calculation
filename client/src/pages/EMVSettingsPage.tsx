@@ -744,7 +744,7 @@ export default function EMVSettingsPage() {
                                         min="0"
                                         value={value}
                                         onChange={(e) => handleBaseValueChange("instagram", postType, engType, e.target.value)}
-                                        className="rounded-l-none w-16 h-9 text-sm"
+                                        className="rounded-l-none w-24 h-9 text-sm"
                                       />
                                     </div>
                                   </div>
@@ -786,7 +786,7 @@ export default function EMVSettingsPage() {
                                         min="0"
                                         value={value}
                                         onChange={(e) => handleBaseValueChange("tiktok", postType, engType, e.target.value)}
-                                        className="rounded-l-none w-16 h-9 text-sm"
+                                        className="rounded-l-none w-24 h-9 text-sm"
                                       />
                                     </div>
                                   </div>
@@ -828,7 +828,7 @@ export default function EMVSettingsPage() {
                                         min="0"
                                         value={value}
                                         onChange={(e) => handleBaseValueChange("youtube", postType, engType, e.target.value)}
-                                        className="rounded-l-none w-16 h-9 text-sm"
+                                        className="rounded-l-none w-24 h-9 text-sm"
                                       />
                                     </div>
                                   </div>
@@ -870,7 +870,7 @@ export default function EMVSettingsPage() {
                                         min="0"
                                         value={value}
                                         onChange={(e) => handleBaseValueChange("pinterest", postType, engType, e.target.value)}
-                                        className="rounded-l-none w-16 h-9 text-sm"
+                                        className="rounded-l-none w-24 h-9 text-sm"
                                       />
                                     </div>
                                   </div>

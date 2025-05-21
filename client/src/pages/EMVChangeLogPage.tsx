@@ -163,10 +163,10 @@ export default function EMVChangeLogPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-40">Date & Time</TableHead>
+                      <TableHead className="w-52">Date & Time</TableHead>
                       <TableHead className="w-32">User</TableHead>
-                      <TableHead className="w-32">Category</TableHead>
-                      <TableHead className="w-24">Action</TableHead>
+                      <TableHead className="w-48">Category</TableHead>
+                      <TableHead className="w-28">Action</TableHead>
                       <TableHead>Details</TableHead>
                     </TableRow>
                   </TableHeader>
