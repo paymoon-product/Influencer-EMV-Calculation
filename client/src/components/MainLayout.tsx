@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { CloudLightning, Settings, BookOpen, Clock } from "lucide-react";
+import { CloudLightning, Settings, BookOpen, Clock, Sliders } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,8 +25,8 @@ export function MainLayout({ children }: MainLayoutProps) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="flex items-center space-x-1">
-                  <Settings className="h-4 w-4" />
-                  <span>General</span>
+                  <Sliders className="h-4 w-4" />
+                  <span>Options</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
