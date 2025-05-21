@@ -1,14 +1,30 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Save, RotateCcw, Plus, Trash2 } from "lucide-react";
+import { 
+  ArrowLeft, Save, RotateCcw, Plus, Trash2, Users, Layout,
+  BookOpen, PenTool, Settings, Clock
+} from "lucide-react";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { emvData } from "@/lib/emv-data";
 import { Separator } from "@/components/ui/separator";
+import { 
+  FaInstagram, FaTiktok, FaYoutube, FaPinterest,
+  FaRegUser, FaUserFriends, FaUsers, FaUserTie, FaUserCheck,
+  FaRegLightbulb, FaHashtag
+} from "react-icons/fa";
+import { 
+  FaSpa as BeautyIcon, FaTshirt as FashionIcon, FaRunning as FitnessIcon,
+  FaMoneyBillWave as FinanceIcon, FaUtensils as FoodIcon,
+  FaGamepad as GameIcon, FaMusic as MusicIcon,
+  FaPlane as TravelIcon, FaMobileAlt as TechnologyIcon,
+  FaEllipsisH as OtherIcon
+} from "react-icons/fa";
 import { 
   Dialog,
   DialogContent, 
@@ -272,21 +288,58 @@ export default function EMVSettingsPage() {
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {Object.entries(creatorFactors).map(([key, value]) => (
-                        <div key={key} className="space-y-2">
-                          <Label htmlFor={`creator-${key}`}>
-                            {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                          </Label>
-                          <Input
-                            id={`creator-${key}`}
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={value}
-                            onChange={(e) => handleFactorChange(key, e.target.value, setCreatorFactors, creatorFactors)}
-                          />
-                        </div>
-                      ))}
+                      {Object.entries(creatorFactors).map(([key, value]) => {
+                        // Determine icon and follower range based on creator size
+                        let icon = <FaRegUser />;
+                        let followerRange = "";
+                        
+                        switch(key) {
+                          case 'nano':
+                            icon = <FaRegUser className="text-blue-500" />;
+                            followerRange = "1K-10K followers";
+                            break;
+                          case 'micro':
+                            icon = <FaUserFriends className="text-green-500" />;
+                            followerRange = "10K-50K followers";
+                            break;
+                          case 'mid_tier':
+                            icon = <FaUsers className="text-yellow-500" />;
+                            followerRange = "50K-500K followers";
+                            break;
+                          case 'macro':
+                            icon = <FaUserTie className="text-orange-500" />;
+                            followerRange = "500K-1M followers";
+                            break;
+                          case 'mega':
+                            icon = <FaUserCheck className="text-red-500" />;
+                            followerRange = "1M+ followers";
+                            break;
+                        }
+                        
+                        return (
+                          <div key={key} className="space-y-2 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <div className="text-xl">{icon}</div>
+                              <Label htmlFor={`creator-${key}`} className="text-sm font-medium">
+                                {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                <span className="ml-2 text-xs text-gray-500">{followerRange}</span>
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                              <Input
+                                id={`creator-${key}`}
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={value}
+                                className="w-20"
+                                onChange={(e) => handleFactorChange(key, e.target.value, setCreatorFactors, creatorFactors)}
+                              />
+                              <span className="text-sm text-gray-500">Weight Factor</span>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </TabsContent>
 
@@ -311,19 +364,72 @@ export default function EMVSettingsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {Object.entries(postTypeFactors).map(([key, value]) => {
                         const [platform, postType] = key.split('_');
+                        
+                        // Determine platform icon
+                        let platformIcon;
+                        switch(platform) {
+                          case 'instagram':
+                            platformIcon = <FaInstagram className="text-pink-500" />;
+                            break;
+                          case 'tiktok':
+                            platformIcon = <FaTiktok className="text-black" />;
+                            break;
+                          case 'youtube':
+                            platformIcon = <FaYoutube className="text-red-600" />;
+                            break;
+                          case 'pinterest':
+                            platformIcon = <FaPinterest className="text-red-500" />;
+                            break;
+                          default:
+                            platformIcon = <FaHashtag />;
+                        }
+
+                        // Handle slider value change
+                        const handleSliderChange = (newValue: number[]) => {
+                          handleFactorChange(key, newValue[0].toString(), setPostTypeFactors, postTypeFactors);
+                        };
+                        
                         return (
-                          <div key={key} className="space-y-2">
-                            <Label htmlFor={`post-type-${key}`}>
-                              {platform.charAt(0).toUpperCase() + platform.slice(1)} {postType.charAt(0).toUpperCase() + postType.slice(1)}
-                            </Label>
-                            <Input
-                              id={`post-type-${key}`}
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              value={value}
-                              onChange={(e) => handleFactorChange(key, e.target.value, setPostTypeFactors, postTypeFactors)}
-                            />
+                          <div key={key} className="space-y-4 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                            <div className="flex items-center space-x-2">
+                              <div className="text-xl">{platformIcon}</div>
+                              <Label htmlFor={`post-type-${key}`} className="text-sm font-medium">
+                                {platform.charAt(0).toUpperCase() + platform.slice(1)}{' '}
+                                <span className="font-bold">{postType.charAt(0).toUpperCase() + postType.slice(1)}</span>
+                              </Label>
+                            </div>
+                            
+                            <div className="space-y-3">
+                              <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-500">Factor: {value}</span>
+                                <Input
+                                  id={`post-type-${key}`}
+                                  type="number"
+                                  step="0.1"
+                                  min="0"
+                                  max="5"
+                                  value={value}
+                                  className="w-20"
+                                  onChange={(e) => handleFactorChange(key, e.target.value, setPostTypeFactors, postTypeFactors)}
+                                />
+                              </div>
+                              
+                              <Slider 
+                                defaultValue={[value]} 
+                                max={5} 
+                                step={0.1}
+                                value={[value]}
+                                onValueChange={handleSliderChange}
+                              />
+                              <div className="flex justify-between text-xs text-gray-500">
+                                <span>0</span>
+                                <span>1</span>
+                                <span>2</span>
+                                <span>3</span>
+                                <span>4</span>
+                                <span>5</span>
+                              </div>
+                            </div>
                           </div>
                         );
                       })}
@@ -360,21 +466,67 @@ export default function EMVSettingsPage() {
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {Object.entries(topicFactors).map(([key, value]) => (
-                        <div key={key} className="space-y-2">
-                          <Label htmlFor={`topic-${key}`}>
-                            {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                          </Label>
-                          <Input
-                            id={`topic-${key}`}
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={value}
-                            onChange={(e) => handleFactorChange(key, e.target.value, setTopicFactors, topicFactors)}
-                          />
-                        </div>
-                      ))}
+                      {Object.entries(topicFactors).map(([key, value]) => {
+                        // Determine topic icon
+                        let topicIcon;
+                        switch(key) {
+                          case 'beauty':
+                            topicIcon = <FaRegLightbulb className="text-pink-400" />;
+                            break;
+                          case 'fashion':
+                            topicIcon = <FashionIcon className="text-purple-500" />;
+                            break;
+                          case 'fitness':
+                            topicIcon = <FitnessIcon className="text-green-500" />;
+                            break;
+                          case 'finance':
+                            topicIcon = <FinanceIcon className="text-blue-500" />;
+                            break;
+                          case 'food':
+                            topicIcon = <FoodIcon className="text-orange-400" />;
+                            break;
+                          case 'game':
+                            topicIcon = <GameIcon className="text-red-400" />;
+                            break;
+                          case 'music':
+                            topicIcon = <MusicIcon className="text-indigo-400" />;
+                            break;
+                          case 'travel':
+                            topicIcon = <TravelIcon className="text-blue-400" />;
+                            break;
+                          case 'technology':
+                            topicIcon = <TechnologyIcon className="text-gray-700" />;
+                            break;
+                          case 'other':
+                            topicIcon = <OtherIcon className="text-gray-500" />;
+                            break;
+                          default:
+                            topicIcon = <FaHashtag className="text-gray-400" />;
+                        }
+                        
+                        return (
+                          <div key={key} className="space-y-2 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <div className="text-xl">{topicIcon}</div>
+                              <Label htmlFor={`topic-${key}`} className="text-sm font-medium">
+                                {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                              <Input
+                                id={`topic-${key}`}
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                value={value}
+                                className="w-20"
+                                onChange={(e) => handleFactorChange(key, e.target.value, setTopicFactors, topicFactors)}
+                              />
+                              <span className="text-sm text-gray-500">Weight Factor</span>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
 
                     {Object.keys(customTopics).length > 0 && (
