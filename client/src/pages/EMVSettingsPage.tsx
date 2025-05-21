@@ -346,9 +346,9 @@ export default function EMVSettingsPage() {
                         })}
                       </div>
 
-                      {/* Second row: Mid Tier, Macro, Mega */}
+                      {/* Second row: Mid Tier, Macro, Celebrity */}
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {['mid_tier', 'macro', 'mega'].map(key => {
+                        {['mid_tier', 'macro', 'celebrity'].map(key => {
                           if (!creatorFactors[key]) return null;
                           const value = creatorFactors[key];
                           
@@ -365,7 +365,7 @@ export default function EMVSettingsPage() {
                               icon = <FaUserTie className="text-orange-500" />;
                               followerRange = "500K-1M followers";
                               break;
-                            case 'mega':
+                            case 'celebrity':
                               icon = <FaUserCheck className="text-red-500" />;
                               followerRange = "1M+ followers";
                               break;
@@ -656,31 +656,37 @@ export default function EMVSettingsPage() {
                       <>
                         <Separator className="my-6" />
                         <h4 className="text-md font-medium text-primary-800 mb-4">Custom Topics</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <p className="text-sm text-gray-500 mb-0">Weight Factor</p>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mt-4">
                           {Object.entries(customTopics).map(([key, value]) => (
-                            <div key={key} className="space-y-2">
-                              <div className="flex justify-between">
-                                <Label htmlFor={`custom-topic-${key}`}>
+                            <div key={key} className="space-y-2 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <div className="text-xl"><FaHashtag className="text-gray-400" /></div>
+                                <Label htmlFor={`custom-topic-${key}`} className="text-sm font-medium">
                                   {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                                 </Label>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Input
+                                  id={`custom-topic-${key}`}
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  value={value}
+                                  className="w-20"
+                                  onChange={(e) => handleFactorChange(key, e.target.value, setCustomTopics, customTopics)}
+                                />
                                 <Button 
                                   variant="ghost" 
                                   size="sm" 
                                   onClick={() => handleRemoveCustomTopic(key)}
-                                  className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                                  className="h-8 px-2 text-red-500 hover:text-red-700"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                   <span className="sr-only">Remove</span>
                                 </Button>
                               </div>
-                              <Input
-                                id={`custom-topic-${key}`}
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                value={value}
-                                onChange={(e) => handleFactorChange(key, e.target.value, setCustomTopics, customTopics)}
-                              />
                             </div>
                           ))}
                         </div>
@@ -728,7 +734,7 @@ export default function EMVSettingsPage() {
                                       {engType.charAt(0).toUpperCase() + engType.slice(1)}:
                                     </Label>
                                     <div className="flex items-center">
-                                      <span className="inline-flex items-center px-1 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-xs">
+                                      <span className="inline-flex items-center px-2 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm h-9">
                                         $
                                       </span>
                                       <Input
@@ -738,7 +744,7 @@ export default function EMVSettingsPage() {
                                         min="0"
                                         value={value}
                                         onChange={(e) => handleBaseValueChange("instagram", postType, engType, e.target.value)}
-                                        className="rounded-l-none w-16 h-7 text-xs"
+                                        className="rounded-l-none w-16 h-9 text-sm"
                                       />
                                     </div>
                                   </div>
@@ -770,7 +776,7 @@ export default function EMVSettingsPage() {
                                       {engType.charAt(0).toUpperCase() + engType.slice(1)}:
                                     </Label>
                                     <div className="flex items-center">
-                                      <span className="inline-flex items-center px-1 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-xs">
+                                      <span className="inline-flex items-center px-2 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm h-9">
                                         $
                                       </span>
                                       <Input
@@ -780,7 +786,7 @@ export default function EMVSettingsPage() {
                                         min="0"
                                         value={value}
                                         onChange={(e) => handleBaseValueChange("tiktok", postType, engType, e.target.value)}
-                                        className="rounded-l-none w-16 h-7 text-xs"
+                                        className="rounded-l-none w-16 h-9 text-sm"
                                       />
                                     </div>
                                   </div>
@@ -812,7 +818,7 @@ export default function EMVSettingsPage() {
                                       {engType.charAt(0).toUpperCase() + engType.slice(1)}:
                                     </Label>
                                     <div className="flex items-center">
-                                      <span className="inline-flex items-center px-1 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-xs">
+                                      <span className="inline-flex items-center px-2 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm h-9">
                                         $
                                       </span>
                                       <Input
@@ -822,7 +828,7 @@ export default function EMVSettingsPage() {
                                         min="0"
                                         value={value}
                                         onChange={(e) => handleBaseValueChange("youtube", postType, engType, e.target.value)}
-                                        className="rounded-l-none w-16 h-7 text-xs"
+                                        className="rounded-l-none w-16 h-9 text-sm"
                                       />
                                     </div>
                                   </div>
@@ -854,7 +860,7 @@ export default function EMVSettingsPage() {
                                       {engType.charAt(0).toUpperCase() + engType.slice(1)}:
                                     </Label>
                                     <div className="flex items-center">
-                                      <span className="inline-flex items-center px-1 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-xs">
+                                      <span className="inline-flex items-center px-2 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm h-9">
                                         $
                                       </span>
                                       <Input
@@ -864,7 +870,7 @@ export default function EMVSettingsPage() {
                                         min="0"
                                         value={value}
                                         onChange={(e) => handleBaseValueChange("pinterest", postType, engType, e.target.value)}
-                                        className="rounded-l-none w-16 h-7 text-xs"
+                                        className="rounded-l-none w-16 h-9 text-sm"
                                       />
                                     </div>
                                   </div>
