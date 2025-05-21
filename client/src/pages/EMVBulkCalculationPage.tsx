@@ -92,8 +92,8 @@ function validateRow(row: string[], headers: string[]): [boolean, any] {
   const requiredFields = {
     "Platform": ["instagram", "tiktok", "youtube", "pinterest"],
     "Post Type": null, // Will be validated against platform
-    "Creator Size": ["brand_fan", "nano", "micro", "mid_tier", "macro", "celebrity"],
-    "Content Topic": ["beauty", "fashion", "food_drink", "fitness", "travel", "technology", "finance"]
+    "Creator Size": ["nano", "micro", "mid_tier", "macro", "mega"],
+    "Content Topic": ["beauty", "fashion", "fitness", "finance", "food", "game", "music", "travel", "technology", "other"]
   };
 
   const validPostTypes = {
@@ -245,7 +245,7 @@ export default function EMVBulkCalculationPage() {
         if (validationErrors) {
           toast({
             title: "Validation Errors",
-            description: "Some rows contain errors. Please fix them before calculating.",
+            description: "Some rows contain validation errors. Please fix the errors before calculating EMV.",
             variant: "destructive",
           });
         } else {
@@ -610,6 +610,13 @@ export default function EMVBulkCalculationPage() {
                   <AlertTitle>Validation Errors</AlertTitle>
                   <AlertDescription>
                     Some rows contain validation errors. Please fix the errors before calculating EMV.
+                    <ul className="mt-2 list-disc pl-5 text-sm">
+                      <li>Platform must be one of: instagram, tiktok, youtube, pinterest</li>
+                      <li>Post Type must match the selected platform (e.g., post, reel, story for Instagram)</li>
+                      <li>Creator Size must be one of: nano, micro, mid_tier, macro, mega</li>
+                      <li>Content Topic must be one of: beauty, fashion, fitness, finance, food, game, music, travel, technology, other</li>
+                      <li>At least one engagement metric (likes, views, etc.) must have a value</li>
+                    </ul>
                   </AlertDescription>
                 </Alert>
               )}
