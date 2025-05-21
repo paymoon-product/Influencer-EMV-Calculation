@@ -74,13 +74,28 @@ export const emvData = {
     pinterest_pin: 0.7
   },
   topicFactors: {
-    beauty: 1.3,
-    fashion: 1.2,
+    beauty_cosmetic_personal_care: 1.3,
+    shopping_retail: 1.2,
+    health_beauty: 1.2,
     food_drink: 1.2,
+    restaurant: 1.2,
     fitness: 1.1,
     travel: 1.1,
+    photography: 1.1,
+    music_band: 1.0,
+    artist: 1.0,
+    writer: 1.0,
+    blogger: 1.0,
+    personal_blog: 1.0,
+    entrepreneur: 1.0,
+    clothing: 1.0,
+    grocery_store: 1.0,
+    product_services: 1.0,
+    gamer: 0.9,
     technology: 0.9,
-    finance: 0.8
+    editor: 0.9,
+    finance: 0.8,
+    others: 1.0
   },
   postTypes: {
     instagram: ["post", "reel", "story"],

@@ -6,12 +6,25 @@ function getCustomizedFactors() {
   const savedCreatorFactors = localStorage.getItem("emv-creator-factors");
   const savedPostTypeFactors = localStorage.getItem("emv-post-type-factors");
   const savedTopicFactors = localStorage.getItem("emv-topic-factors");
+  const savedBaseValues = localStorage.getItem("emv-base-values");
+  const savedCustomTopics = localStorage.getItem("emv-custom-topics");
+  
+  // Parse custom topics if they exist
+  const customTopics = savedCustomTopics ? JSON.parse(savedCustomTopics) : {};
+  
+  // Combine default topic factors with custom topics
+  const topicFactorsCombined = {
+    ...emvData.topicFactors,
+    ...(savedTopicFactors ? JSON.parse(savedTopicFactors) : {}),
+    ...customTopics
+  };
   
   // Return an object with either customized factors or defaults
   return {
     creatorFactors: savedCreatorFactors ? JSON.parse(savedCreatorFactors) : emvData.creatorFactors,
     postTypeFactors: savedPostTypeFactors ? JSON.parse(savedPostTypeFactors) : emvData.postTypeFactors,
-    topicFactors: savedTopicFactors ? JSON.parse(savedTopicFactors) : emvData.topicFactors
+    topicFactors: topicFactorsCombined,
+    baseValues: savedBaseValues ? JSON.parse(savedBaseValues) : emvData.baseValues
   };
 }
 
@@ -38,7 +51,10 @@ export function calculateEMV(values: FormValues): EMVResult {
   fields.forEach((field) => {
     const count = Number(values[field]) || 0;
     if (count > 0) {
-      const baseValue = emvData.baseValues[platform as keyof typeof emvData.baseValues][
+      // Use customized base values if available, otherwise use default ones
+      const baseValue = customFactors.baseValues[platform as keyof typeof emvData.baseValues]?.[
+        postType as keyof (typeof emvData.baseValues)[keyof typeof emvData.baseValues]
+      ]?.[field as keyof any] || emvData.baseValues[platform as keyof typeof emvData.baseValues][
         postType as keyof (typeof emvData.baseValues)[keyof typeof emvData.baseValues]
       ][field as keyof any];
 

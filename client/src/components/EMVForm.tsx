@@ -193,14 +193,29 @@ export function EMVForm({ onSubmit }: EMVFormProps) {
                         <SelectValue placeholder="Select Content Topic" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="beauty">Beauty</SelectItem>
-                      <SelectItem value="fashion">Fashion</SelectItem>
+                    <SelectContent className="max-h-60 overflow-y-auto">
+                      <SelectItem value="beauty_cosmetic_personal_care">Beauty, Cosmetic & Personal Care</SelectItem>
+                      <SelectItem value="shopping_retail">Shopping & Retail</SelectItem>
+                      <SelectItem value="health_beauty">Health/Beauty</SelectItem>
                       <SelectItem value="food_drink">Food and Drink</SelectItem>
+                      <SelectItem value="restaurant">Restaurant</SelectItem>
                       <SelectItem value="fitness">Fitness</SelectItem>
                       <SelectItem value="travel">Travel</SelectItem>
+                      <SelectItem value="photography">Photography</SelectItem>
+                      <SelectItem value="music_band">Music/Band</SelectItem>
+                      <SelectItem value="artist">Artist</SelectItem>
+                      <SelectItem value="writer">Writer</SelectItem>
+                      <SelectItem value="blogger">Blogger</SelectItem>
+                      <SelectItem value="personal_blog">Personal Blog</SelectItem>
+                      <SelectItem value="entrepreneur">Entrepreneur</SelectItem>
+                      <SelectItem value="clothing">Clothing</SelectItem>
+                      <SelectItem value="grocery_store">Grocery Store</SelectItem>
+                      <SelectItem value="product_services">Product/Services</SelectItem>
+                      <SelectItem value="gamer">Gamer</SelectItem>
                       <SelectItem value="technology">Technology</SelectItem>
+                      <SelectItem value="editor">Editor</SelectItem>
                       <SelectItem value="finance">Finance</SelectItem>
+                      <SelectItem value="others">Others</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormItem>
