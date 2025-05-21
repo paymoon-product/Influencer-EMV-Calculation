@@ -9,6 +9,7 @@ import EMVReferencePage from "@/pages/EMVReferencePage";
 import EMVSettingsPage from "@/pages/EMVSettingsPage";
 import EMVHistoryPage from "@/pages/EMVHistoryPage";
 import EMVBulkCalculationPage from "@/pages/EMVBulkCalculationPage";
+import EMVChangeLogPage from "@/pages/EMVChangeLogPage";
 
 function Router() {
   return (
@@ -18,6 +19,7 @@ function Router() {
       <Route path="/settings" component={EMVSettingsPage} />
       <Route path="/history" component={EMVHistoryPage} />
       <Route path="/bulk" component={EMVBulkCalculationPage} />
+      <Route path="/changelog" component={EMVChangeLogPage} />
       <Route component={NotFound} />
     </Switch>
   );
