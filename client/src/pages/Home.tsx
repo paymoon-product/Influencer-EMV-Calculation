@@ -1,5 +1,5 @@
 import { EMVCalculator } from "@/components/EMVCalculator";
-import { CloudLightning, Settings, BookOpen, HelpCircle } from "lucide-react";
+import { CloudLightning, Settings, BookOpen, HelpCircle, Clock } from "lucide-react";
 import { Link } from "wouter";
 import { 
   DropdownMenu, 
@@ -47,6 +47,12 @@ export default function Home() {
                   <Link href="/reference" className="flex items-center w-full">
                     <BookOpen className="h-4 w-4 mr-2" />
                     <span>EMV Reference Guide</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/changelog" className="flex items-center w-full">
+                    <Clock className="h-4 w-4 mr-2" />
+                    <span>Change Log</span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>

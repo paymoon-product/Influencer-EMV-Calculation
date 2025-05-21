@@ -706,46 +706,175 @@ export default function EMVSettingsPage() {
                       These are the base monetary values for each type of engagement across different platforms and post types.
                     </p>
 
-                    {Object.entries(baseValues).map(([platform, postTypes]) => (
-                      <div key={platform} className="mb-8">
-                        <h4 className="text-md font-medium text-primary-800 capitalize mb-4">
-                          {platform.charAt(0).toUpperCase() + platform.slice(1)}
-                        </h4>
+                    <div className="space-y-8">
+                      {/* Instagram */}
+                      <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                        <div className="flex items-center space-x-2 mb-4">
+                          <div className="text-xl text-pink-500"><FaInstagram /></div>
+                          <h4 className="text-md font-medium text-primary-800">Instagram</h4>
+                        </div>
                         
-                        {Object.entries(postTypes).map(([postType, engagementTypes]) => (
-                          <div key={`${platform}-${postType}`} className="mb-6">
-                            <h5 className="text-sm font-medium text-primary-700 capitalize mb-3">
-                              {postType.charAt(0).toUpperCase() + postType.slice(1)}
-                            </h5>
-                            
-                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                              {Object.entries(engagementTypes).map(([engType, value]) => (
-                                <div key={`${platform}-${postType}-${engType}`} className="space-y-2">
-                                  <Label htmlFor={`base-${platform}-${postType}-${engType}`} className="capitalize">
-                                    {engType.charAt(0).toUpperCase() + engType.slice(1)}
-                                  </Label>
-                                  <div className="flex">
-                                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                                      $
-                                    </span>
-                                    <Input
-                                      id={`base-${platform}-${postType}-${engType}`}
-                                      type="number"
-                                      step="0.01"
-                                      min="0"
-                                      value={value}
-                                      onChange={(e) => handleBaseValueChange(platform, postType, engType, e.target.value)}
-                                      className="rounded-l-none"
-                                    />
+                        <div className="space-y-6">
+                          {Object.entries(baseValues.instagram || {}).map(([postType, engagementTypes]) => (
+                            <div key={`instagram-${postType}`} className="space-y-2">
+                              <h5 className="text-sm font-medium text-primary-700 capitalize border-b pb-1">
+                                {postType.charAt(0).toUpperCase() + postType.slice(1)}
+                              </h5>
+                              
+                              <div className="flex flex-wrap gap-3">
+                                {Object.entries(engagementTypes).map(([engType, value]) => (
+                                  <div key={`instagram-${postType}-${engType}`} className="flex items-center space-x-1">
+                                    <Label htmlFor={`base-instagram-${postType}-${engType}`} className="capitalize text-xs min-w-24">
+                                      {engType.charAt(0).toUpperCase() + engType.slice(1)}:
+                                    </Label>
+                                    <div className="flex items-center">
+                                      <span className="inline-flex items-center px-1 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-xs">
+                                        $
+                                      </span>
+                                      <Input
+                                        id={`base-instagram-${postType}-${engType}`}
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        value={value}
+                                        onChange={(e) => handleBaseValueChange("instagram", postType, engType, e.target.value)}
+                                        className="rounded-l-none w-16 h-7 text-xs"
+                                      />
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        ))}
-                        <Separator className="my-4" />
+                          ))}
+                        </div>
                       </div>
-                    ))}
+                      
+                      {/* TikTok */}
+                      <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                        <div className="flex items-center space-x-2 mb-4">
+                          <div className="text-xl text-black"><FaTiktok /></div>
+                          <h4 className="text-md font-medium text-primary-800">TikTok</h4>
+                        </div>
+                        
+                        <div className="space-y-6">
+                          {Object.entries(baseValues.tiktok || {}).map(([postType, engagementTypes]) => (
+                            <div key={`tiktok-${postType}`} className="space-y-2">
+                              <h5 className="text-sm font-medium text-primary-700 capitalize border-b pb-1">
+                                {postType.charAt(0).toUpperCase() + postType.slice(1)}
+                              </h5>
+                              
+                              <div className="flex flex-wrap gap-3">
+                                {Object.entries(engagementTypes).map(([engType, value]) => (
+                                  <div key={`tiktok-${postType}-${engType}`} className="flex items-center space-x-1">
+                                    <Label htmlFor={`base-tiktok-${postType}-${engType}`} className="capitalize text-xs min-w-24">
+                                      {engType.charAt(0).toUpperCase() + engType.slice(1)}:
+                                    </Label>
+                                    <div className="flex items-center">
+                                      <span className="inline-flex items-center px-1 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-xs">
+                                        $
+                                      </span>
+                                      <Input
+                                        id={`base-tiktok-${postType}-${engType}`}
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        value={value}
+                                        onChange={(e) => handleBaseValueChange("tiktok", postType, engType, e.target.value)}
+                                        className="rounded-l-none w-16 h-7 text-xs"
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* YouTube */}
+                      <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                        <div className="flex items-center space-x-2 mb-4">
+                          <div className="text-xl text-red-600"><FaYoutube /></div>
+                          <h4 className="text-md font-medium text-primary-800">YouTube</h4>
+                        </div>
+                        
+                        <div className="space-y-6">
+                          {Object.entries(baseValues.youtube || {}).map(([postType, engagementTypes]) => (
+                            <div key={`youtube-${postType}`} className="space-y-2">
+                              <h5 className="text-sm font-medium text-primary-700 capitalize border-b pb-1">
+                                {postType.charAt(0).toUpperCase() + postType.slice(1)}
+                              </h5>
+                              
+                              <div className="flex flex-wrap gap-3">
+                                {Object.entries(engagementTypes).map(([engType, value]) => (
+                                  <div key={`youtube-${postType}-${engType}`} className="flex items-center space-x-1">
+                                    <Label htmlFor={`base-youtube-${postType}-${engType}`} className="capitalize text-xs min-w-24">
+                                      {engType.charAt(0).toUpperCase() + engType.slice(1)}:
+                                    </Label>
+                                    <div className="flex items-center">
+                                      <span className="inline-flex items-center px-1 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-xs">
+                                        $
+                                      </span>
+                                      <Input
+                                        id={`base-youtube-${postType}-${engType}`}
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        value={value}
+                                        onChange={(e) => handleBaseValueChange("youtube", postType, engType, e.target.value)}
+                                        className="rounded-l-none w-16 h-7 text-xs"
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Pinterest */}
+                      <div className="bg-white p-5 rounded-lg shadow-sm border border-gray-100">
+                        <div className="flex items-center space-x-2 mb-4">
+                          <div className="text-xl text-red-600"><FaPinterest /></div>
+                          <h4 className="text-md font-medium text-primary-800">Pinterest</h4>
+                        </div>
+                        
+                        <div className="space-y-6">
+                          {Object.entries(baseValues.pinterest || {}).map(([postType, engagementTypes]) => (
+                            <div key={`pinterest-${postType}`} className="space-y-2">
+                              <h5 className="text-sm font-medium text-primary-700 capitalize border-b pb-1">
+                                {postType.charAt(0).toUpperCase() + postType.slice(1)}
+                              </h5>
+                              
+                              <div className="flex flex-wrap gap-3">
+                                {Object.entries(engagementTypes).map(([engType, value]) => (
+                                  <div key={`pinterest-${postType}-${engType}`} className="flex items-center space-x-1">
+                                    <Label htmlFor={`base-pinterest-${postType}-${engType}`} className="capitalize text-xs min-w-24">
+                                      {engType.charAt(0).toUpperCase() + engType.slice(1)}:
+                                    </Label>
+                                    <div className="flex items-center">
+                                      <span className="inline-flex items-center px-1 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-xs">
+                                        $
+                                      </span>
+                                      <Input
+                                        id={`base-pinterest-${postType}-${engType}`}
+                                        type="number"
+                                        step="0.01"
+                                        min="0"
+                                        value={value}
+                                        onChange={(e) => handleBaseValueChange("pinterest", postType, engType, e.target.value)}
+                                        className="rounded-l-none w-16 h-7 text-xs"
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </TabsContent>
                 </Tabs>
               </CardContent>
