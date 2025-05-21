@@ -1,6 +1,6 @@
 import { EMVCalculator } from "@/components/EMVCalculator";
-import { CloudLightning, Settings, BookOpen, HelpCircle, Clock } from "lucide-react";
-import { Link } from "wouter";
+import { CloudLightning, Settings, BookOpen, HelpCircle, Clock, User, Users } from "lucide-react";
+import { Link, useLocation } from "wouter";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -8,6 +8,8 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import EMVBulkCalculationPage from "./EMVBulkCalculationPage";
 
 export default function Home() {
   return (
@@ -19,14 +21,6 @@ export default function Home() {
             <h1 className="text-xl font-semibold text-primary-900">Aspire EMV Calculator</h1>
           </div>
           <div className="flex items-center space-x-2">
-            <Link href="/bulk">
-              <Button variant="outline" size="sm" className="flex items-center space-x-1">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
-                <span>Bulk Calculation</span>
-              </Button>
-            </Link>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -67,7 +61,28 @@ export default function Home() {
             <p className="text-primary-600">Calculate the monetary impact of organic social media engagement based on our updated EMV framework.</p>
           </div>
           
-          <EMVCalculator />
+          <Tabs defaultValue="individual" className="w-full">
+            <TabsList className="mb-6">
+              <TabsTrigger value="individual" className="flex items-center">
+                <User className="h-4 w-4 mr-2" />
+                Individual Input
+              </TabsTrigger>
+              <TabsTrigger value="bulk" className="flex items-center">
+                <Users className="h-4 w-4 mr-2" />
+                Bulk Calculation
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="individual">
+              <EMVCalculator />
+            </TabsContent>
+            
+            <TabsContent value="bulk">
+              <div className="p-4 border rounded-lg bg-white">
+                <EMVBulkCalculationPage />
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
 

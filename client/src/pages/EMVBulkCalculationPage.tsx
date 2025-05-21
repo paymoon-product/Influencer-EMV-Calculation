@@ -480,23 +480,8 @@ export default function EMVBulkCalculationPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-white border-b border-primary-200 py-4 px-6">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <Link href="/">
-              <Button variant="ghost" size="sm" className="flex items-center space-x-1">
-                <ArrowLeft className="h-4 w-4" />
-                <span>Back to Calculator</span>
-              </Button>
-            </Link>
-          </div>
-          <h1 className="text-xl font-semibold text-primary-900">Bulk EMV Calculator</h1>
-          <div></div>
-        </div>
-      </header>
-
-      <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <div className="flex flex-col">
+      <div className="flex-1">
         <div className="container mx-auto">
           <Card className="mb-6">
             <CardContent className="p-6">
