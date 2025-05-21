@@ -13,6 +13,12 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { emvData } from "@/lib/emv-data";
 import { Separator } from "@/components/ui/separator";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { 
   FaInstagram, FaTiktok, FaYoutube, FaPinterest,
   FaRegUser, FaUserFriends, FaUsers, FaUserTie, FaUserCheck,
