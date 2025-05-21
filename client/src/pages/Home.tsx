@@ -1,15 +1,9 @@
 import { EMVCalculator } from "@/components/EMVCalculator";
-import { CloudLightning, Settings, BookOpen, HelpCircle, Clock, User, Users } from "lucide-react";
-import { Link, useLocation } from "wouter";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
+import { User, Users } from "lucide-react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import EMVBulkCalculationPage from "./EMVBulkCalculationPage";
+import { MainLayout } from "@/components/MainLayout";
 
 export default function Home() {
   return (

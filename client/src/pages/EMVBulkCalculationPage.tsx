@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, UploadCloud, FileDown, FileX, AlertCircle, Check, FilePlus2 } from "lucide-react";
+import { ArrowLeft, UploadCloud, FileDown, FileX, AlertCircle, Check, FilePlus2, CloudLightning, Settings, BookOpen, Clock } from "lucide-react";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -9,6 +9,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { calculateEMV } from "@/lib/emv-calculator";
 import { FormValues, EMVResult } from "@/lib/emv-data";
 import { apiRequest } from "@/lib/queryClient";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 type BulkCalculationRow = {
   id: number;
@@ -480,8 +486,61 @@ export default function EMVBulkCalculationPage() {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="flex-1">
+    <div className="min-h-screen flex flex-col">
+      {/* Header */}
+      <header className="bg-white border-b border-primary-200 py-4 px-6">
+        <div className="container mx-auto flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <CloudLightning className="h-6 w-6 text-primary" />
+            <h1 className="text-xl font-semibold text-primary-900">Aspire EMV Calculator</h1>
+          </div>
+          <div className="flex items-center space-x-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center space-x-1">
+                  <Settings className="h-4 w-4" />
+                  <span>General</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <Link href="/settings" className="flex items-center w-full">
+                    <Settings className="h-4 w-4 mr-2" />
+                    <span>Settings</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/reference" className="flex items-center w-full">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    <span>EMV Reference Guide</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/changelog" className="flex items-center w-full">
+                    <Clock className="h-4 w-4 mr-2" />
+                    <span>Change Log</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </header>
+
+      {/* Breadcrumb below header */}
+      <div className="bg-gray-50 py-2 px-6 border-b border-gray-200">
+        <div className="container mx-auto flex items-center">
+          <Link href="/">
+            <Button variant="ghost" size="sm" className="flex items-center space-x-1 text-gray-600">
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to Calculator</span>
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="container mx-auto">
           <Card className="mb-6">
             <CardContent className="p-6">
@@ -506,69 +565,58 @@ export default function EMVBulkCalculationPage() {
               </div>
 
               {/* File Upload Section */}
-              <div className="border border-dashed border-gray-300 rounded-lg p-6 mb-6">
-                <div className="flex flex-col items-center text-center">
-                  <UploadCloud className="h-12 w-12 text-gray-400 mb-3" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-1">Upload CSV File</h3>
-                  <p className="text-sm text-gray-500 mb-4">
-                    Upload a CSV file with creator data for bulk EMV calculation
-                  </p>
-                  
-                  <input 
-                    type="file" 
-                    ref={fileInputRef}
-                    className="hidden" 
-                    accept=".csv" 
-                    onChange={handleFileUpload}
-                    disabled={isUploading}
-                  />
-                  
+              <div className="border border-dashed border-gray-300 rounded-lg p-6 mb-6 relative">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  accept=".csv"
+                  className="hidden"
+                />
+                <div className="flex flex-col items-center justify-center">
+                  <UploadCloud className="h-12 w-12 text-gray-400 mb-2" />
+                  <p className="text-gray-600 mb-2">Drag & drop your CSV file or click to browse</p>
                   <Button 
+                    variant="secondary" 
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploading}
-                    className="mb-2"
+                    className="mt-2"
                   >
-                    {isUploading ? (
-                      <>
-                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        <UploadCloud className="h-4 w-4 mr-1" />
-                        Select CSV File
-                      </>
-                    )}
+                    {isUploading ? "Uploading..." : "Upload CSV"}
                   </Button>
-                  
-                  <p className="text-xs text-gray-400">
-                    Supported format: CSV with headers
-                  </p>
                 </div>
               </div>
 
-              {/* Action Buttons */}
+              {/* Actions Bar */}
               {calculationRows.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-6">
-                  
+                  <Button 
+                    onClick={calculateAllEMV} 
+                    disabled={isLoading || hasErrors}
+                    className="flex items-center"
+                  >
+                    {isLoading ? "Calculating..." : "Calculate All EMV"}
+                  </Button>
                   <Button 
                     variant="outline" 
-                    onClick={exportResults} 
-                    disabled={calculationRows.length === 0}
+                    onClick={saveAllCalculations}
+                    disabled={isSaving || hasErrors}
+                    className="flex items-center"
+                  >
+                    {isSaving ? "Saving..." : "Save All Calculations"}
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={exportResults}
                     className="flex items-center"
                   >
                     <FileDown className="h-4 w-4 mr-1" />
                     Export Results
                   </Button>
-                  
                   <Button 
                     variant="ghost" 
-                    onClick={clearCalculations} 
-                    disabled={calculationRows.length === 0}
-                    className="flex items-center text-red-600 hover:text-red-700 hover:bg-red-50"
+                    onClick={clearCalculations}
+                    className="flex items-center text-destructive"
                   >
                     <FileX className="h-4 w-4 mr-1" />
                     Clear All
@@ -576,75 +624,66 @@ export default function EMVBulkCalculationPage() {
                 </div>
               )}
 
-              {/* Validation Errors Alert */}
+              {/* Show validation errors alert if needed */}
               {hasErrors && (
                 <Alert variant="destructive" className="mb-6">
                   <AlertCircle className="h-4 w-4" />
                   <AlertTitle>Validation Errors</AlertTitle>
                   <AlertDescription>
-                    Some rows contain validation errors. Please fix the errors before calculating EMV.
-                    <ul className="mt-2 list-disc pl-5 text-sm">
-                      <li>Platform must be one of: instagram, tiktok, youtube, pinterest</li>
-                      <li>Post Type must match the selected platform (e.g., post, reel, story for Instagram)</li>
-                      <li>Creator Size must be one of: nano, micro, mid_tier, macro, mega</li>
-                      <li>Content Topic must be one of: beauty, fashion, fitness, finance, food, game, music, travel, technology, other</li>
-                      <li>At least one engagement metric (likes, views, etc.) must have a value</li>
-                    </ul>
+                    Some rows contain validation errors. Please review the table below and fix the issues.
                   </AlertDescription>
                 </Alert>
               )}
 
-              {/* Results Table */}
+              {/* Table with calculation rows */}
               {calculationRows.length > 0 && (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-12">ID</TableHead>
-                        <TableHead>Creator</TableHead>
-                        <TableHead>Platform</TableHead>
-                        <TableHead>Post Type</TableHead>
-                        <TableHead>Creator Size</TableHead>
-                        <TableHead>Topic</TableHead>
-                        <TableHead className="text-right">Total EMV</TableHead>
-                        <TableHead>Status</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {calculationRows.map((row) => (
-                        <TableRow key={row.id} className={row.error ? "bg-red-50" : row.result ? "" : "bg-gray-50"}>
-                          <TableCell className="font-medium">{row.id}</TableCell>
-                          <TableCell>{row.creatorName}</TableCell>
-                          <TableCell className="capitalize">{row.platform}</TableCell>
-                          <TableCell className="capitalize">{row.postType}</TableCell>
-                          <TableCell className="capitalize">{row.creatorSize.replace('_', ' ')}</TableCell>
-                          <TableCell className="capitalize">{row.contentTopic.replace('_', ' ')}</TableCell>
-                          <TableCell className="text-right font-medium">
-                            {row.result ? (
-                              <span className="text-green-600">${row.result.totalEMV.toFixed(2)}</span>
-                            ) : (
-                              <span className="text-gray-400">-</span>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {row.error ? (
-                              <div className="flex items-center">
-                                <AlertCircle className="h-4 w-4 text-red-500 mr-1" />
-                                <span className="text-xs text-red-500" title={row.error}>Error</span>
-                              </div>
-                            ) : row.result ? (
-                              <div className="flex items-center">
-                                <Check className="h-4 w-4 text-green-500 mr-1" />
-                                <span className="text-xs text-green-500">Success</span>
-                              </div>
-                            ) : (
-                              <span className="text-xs text-gray-400">Not Calculated</span>
-                            )}
-                          </TableCell>
+                <div className="border rounded-lg overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="whitespace-nowrap">#</TableHead>
+                          <TableHead className="whitespace-nowrap">Creator</TableHead>
+                          <TableHead className="whitespace-nowrap">Platform</TableHead>
+                          <TableHead className="whitespace-nowrap">Type</TableHead>
+                          <TableHead className="whitespace-nowrap">Size</TableHead>
+                          <TableHead className="whitespace-nowrap">Topic</TableHead>
+                          <TableHead className="whitespace-nowrap">Total EMV</TableHead>
+                          <TableHead className="whitespace-nowrap">Status</TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                      </TableHeader>
+                      <TableBody>
+                        {calculationRows.map((row) => (
+                          <TableRow key={row.id} className={row.error ? "bg-red-50" : ""}>
+                            <TableCell>{row.id}</TableCell>
+                            <TableCell>{row.creatorName}</TableCell>
+                            <TableCell>{row.platform}</TableCell>
+                            <TableCell>{row.postType}</TableCell>
+                            <TableCell>{row.creatorSize}</TableCell>
+                            <TableCell>{row.contentTopic}</TableCell>
+                            <TableCell>
+                              {row.result ? `$${row.result.totalEMV.toFixed(2)}` : "-"}
+                            </TableCell>
+                            <TableCell>
+                              {row.error ? (
+                                <div className="flex items-center text-destructive text-sm">
+                                  <AlertCircle className="h-3.5 w-3.5 mr-1" />
+                                  {row.error}
+                                </div>
+                              ) : row.result ? (
+                                <div className="flex items-center text-green-600 text-sm">
+                                  <Check className="h-3.5 w-3.5 mr-1" />
+                                  Success
+                                </div>
+                              ) : (
+                                <span className="text-gray-500 text-sm">Pending</span>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
                 </div>
               )}
             </CardContent>
@@ -652,6 +691,7 @@ export default function EMVBulkCalculationPage() {
         </div>
       </main>
 
+      {/* Footer */}
       <footer className="bg-white border-t border-primary-200 py-4 px-6">
         <div className="container mx-auto text-center text-primary-500 text-sm">
           © {new Date().getFullYear()} Aspire Influencer Marketing Platform | EMV Calculator
