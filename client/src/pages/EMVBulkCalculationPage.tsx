@@ -249,9 +249,42 @@ export default function EMVBulkCalculationPage() {
             variant: "destructive",
           });
         } else {
+          // Auto-calculate EMV values for valid rows
+          const calculatedRows = newCalculationRows.map(row => {
+            if (row.error) return row;
+            
+            try {
+              // Prepare input for EMV calculation
+              const formValues: FormValues = {
+                platform: row.platform,
+                postType: row.postType,
+                creatorSize: row.creatorSize,
+                contentTopic: row.contentTopic,
+                ...row.metrics
+              };
+              
+              // Calculate EMV
+              const result = calculateEMV(formValues);
+              
+              return {
+                ...row,
+                result,
+                error: null
+              };
+            } catch (error) {
+              return {
+                ...row,
+                result: null,
+                error: "Calculation error. Check input values."
+              };
+            }
+          });
+          
+          setCalculationRows(calculatedRows);
+          
           toast({
-            title: "File Uploaded Successfully",
-            description: `${newCalculationRows.length} calculations ready to process.`,
+            title: "Calculations Complete",
+            description: `Successfully processed ${calculatedRows.filter(row => row.result).length} of ${calculatedRows.length} rows.`,
           });
         }
       } catch (error) {
@@ -419,10 +452,10 @@ export default function EMVBulkCalculationPage() {
       row.postType,
       row.creatorSize,
       row.contentTopic,
-      row.result ? `$${row.result.totalEMV.toFixed(2)}` : "N/A",
-      row.result ? row.result.creatorFactor.toFixed(2) : "N/A",
-      row.result ? row.result.postTypeFactor.toFixed(2) : "N/A",
-      row.result ? row.result.topicFactor.toFixed(2) : "N/A",
+      row.result && typeof row.result.totalEMV !== 'undefined' ? `$${row.result.totalEMV.toFixed(2)}` : "N/A",
+      row.result && typeof row.result.creatorFactor !== 'undefined' ? row.result.creatorFactor.toFixed(2) : "N/A",
+      row.result && typeof row.result.postTypeFactor !== 'undefined' ? row.result.postTypeFactor.toFixed(2) : "N/A",
+      row.result && typeof row.result.topicFactor !== 'undefined' ? row.result.topicFactor.toFixed(2) : "N/A",
       row.error ? "Error" : row.result ? "Success" : "Not Calculated"
     ]);
 
