@@ -18,7 +18,7 @@ export default function EMVReferencePage() {
       <header className="bg-white border-b border-primary-200 py-4 px-6">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <CloudLightning className="h-6 w-6 text-primary" />
+            <img src="/attached_assets/icon.png" alt="Aspire Logo" className="h-6 w-6" />
             <h1 className="text-xl font-semibold text-primary-900">Aspire EMV Calculator</h1>
           </div>
           <div className="flex items-center space-x-2">
