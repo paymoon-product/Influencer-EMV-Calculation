@@ -293,59 +293,108 @@ export default function EMVSettingsPage() {
                       These factors adjust EMV based on the influencer's audience size.
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {Object.entries(creatorFactors).map(([key, value]) => {
-                        // Determine icon and follower range based on creator size
-                        let icon = <FaRegUser />;
-                        let followerRange = "";
-                        
-                        switch(key) {
-                          case 'nano':
-                            icon = <FaRegUser className="text-blue-500" />;
-                            followerRange = "1K-10K followers";
-                            break;
-                          case 'micro':
-                            icon = <FaUserFriends className="text-green-500" />;
-                            followerRange = "10K-50K followers";
-                            break;
-                          case 'mid_tier':
-                            icon = <FaUsers className="text-yellow-500" />;
-                            followerRange = "50K-500K followers";
-                            break;
-                          case 'macro':
-                            icon = <FaUserTie className="text-orange-500" />;
-                            followerRange = "500K-1M followers";
-                            break;
-                          case 'mega':
-                            icon = <FaUserCheck className="text-red-500" />;
-                            followerRange = "1M+ followers";
-                            break;
-                        }
-                        
-                        return (
-                          <div key={key} className="space-y-2 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <div className="text-xl">{icon}</div>
-                              <Label htmlFor={`creator-${key}`} className="text-sm font-medium">
-                                {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                                <span className="ml-2 text-xs text-gray-500">{followerRange}</span>
-                              </Label>
+                    <div className="space-y-4">
+                      <p className="text-sm text-gray-500 mb-0">Weight Factor</p>
+
+                      {/* First row: Brand Fan, Nano, Micro */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {['brand_fan', 'nano', 'micro'].map(key => {
+                          if (!creatorFactors[key]) return null;
+                          const value = creatorFactors[key];
+                          
+                          // Determine icon and follower range based on creator size
+                          let icon;
+                          let followerRange;
+                          
+                          switch(key) {
+                            case 'brand_fan':
+                              icon = <FaRegUser className="text-gray-500" />;
+                              followerRange = "< 1K followers";
+                              break;
+                            case 'nano':
+                              icon = <FaRegUser className="text-blue-500" />;
+                              followerRange = "1K-10K followers";
+                              break;
+                            case 'micro':
+                              icon = <FaUserFriends className="text-green-500" />;
+                              followerRange = "10K-50K followers";
+                              break;
+                          }
+                          
+                          return (
+                            <div key={key} className="space-y-2 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <div className="text-xl">{icon}</div>
+                                <Label htmlFor={`creator-${key}`} className="text-sm font-medium">
+                                  {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                  <span className="ml-2 text-xs text-gray-500">{followerRange}</span>
+                                </Label>
+                              </div>
+                              <div className="flex items-center">
+                                <Input
+                                  id={`creator-${key}`}
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  value={value}
+                                  className="w-20"
+                                  onChange={(e) => handleFactorChange(key, e.target.value, setCreatorFactors, creatorFactors)}
+                                />
+                              </div>
                             </div>
-                            <div className="flex items-center space-x-3">
-                              <Input
-                                id={`creator-${key}`}
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                value={value}
-                                className="w-20"
-                                onChange={(e) => handleFactorChange(key, e.target.value, setCreatorFactors, creatorFactors)}
-                              />
-                              <span className="text-sm text-gray-500">Weight Factor</span>
+                          );
+                        })}
+                      </div>
+
+                      {/* Second row: Mid Tier, Macro, Mega */}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {['mid_tier', 'macro', 'mega'].map(key => {
+                          if (!creatorFactors[key]) return null;
+                          const value = creatorFactors[key];
+                          
+                          // Determine icon and follower range based on creator size
+                          let icon;
+                          let followerRange;
+                          
+                          switch(key) {
+                            case 'mid_tier':
+                              icon = <FaUsers className="text-yellow-500" />;
+                              followerRange = "50K-500K followers";
+                              break;
+                            case 'macro':
+                              icon = <FaUserTie className="text-orange-500" />;
+                              followerRange = "500K-1M followers";
+                              break;
+                            case 'mega':
+                              icon = <FaUserCheck className="text-red-500" />;
+                              followerRange = "1M+ followers";
+                              break;
+                          }
+                          
+                          return (
+                            <div key={key} className="space-y-2 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <div className="text-xl">{icon}</div>
+                                <Label htmlFor={`creator-${key}`} className="text-sm font-medium">
+                                  {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                  <span className="ml-2 text-xs text-gray-500">{followerRange}</span>
+                                </Label>
+                              </div>
+                              <div className="flex items-center">
+                                <Input
+                                  id={`creator-${key}`}
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  value={value}
+                                  className="w-20"
+                                  onChange={(e) => handleFactorChange(key, e.target.value, setCreatorFactors, creatorFactors)}
+                                />
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
                   </TabsContent>
 
@@ -471,68 +520,136 @@ export default function EMVSettingsPage() {
                       These factors adjust EMV based on the content's subject matter.
                     </p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {Object.entries(topicFactors).map(([key, value]) => {
-                        // Determine topic icon
-                        let topicIcon;
-                        switch(key) {
-                          case 'beauty':
-                            topicIcon = <FaRegLightbulb className="text-pink-400" />;
-                            break;
-                          case 'fashion':
-                            topicIcon = <FashionIcon className="text-purple-500" />;
-                            break;
-                          case 'fitness':
-                            topicIcon = <FitnessIcon className="text-green-500" />;
-                            break;
-                          case 'finance':
-                            topicIcon = <FinanceIcon className="text-blue-500" />;
-                            break;
-                          case 'food':
-                            topicIcon = <FoodIcon className="text-orange-400" />;
-                            break;
-                          case 'game':
-                            topicIcon = <GameIcon className="text-red-400" />;
-                            break;
-                          case 'music':
-                            topicIcon = <MusicIcon className="text-indigo-400" />;
-                            break;
-                          case 'travel':
-                            topicIcon = <TravelIcon className="text-blue-400" />;
-                            break;
-                          case 'technology':
-                            topicIcon = <TechnologyIcon className="text-gray-700" />;
-                            break;
-                          case 'other':
-                            topicIcon = <OtherIcon className="text-gray-500" />;
-                            break;
-                          default:
-                            topicIcon = <FaHashtag className="text-gray-400" />;
-                        }
-                        
-                        return (
-                          <div key={key} className="space-y-2 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <div className="text-xl">{topicIcon}</div>
-                              <Label htmlFor={`topic-${key}`} className="text-sm font-medium">
-                                {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                              </Label>
+                    <div className="space-y-4">
+                      <p className="text-sm text-gray-500 mb-0">Weight Factor</p>
+                      
+                      {/* Create arrays of topics to display in rows of 5 */}
+                      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        {Object.entries(topicFactors).slice(0, 5).map(([key, value]) => {
+                          // Determine topic icon
+                          let topicIcon;
+                          switch(key) {
+                            case 'beauty':
+                              topicIcon = <FaRegLightbulb className="text-pink-400" />;
+                              break;
+                            case 'fashion':
+                              topicIcon = <FashionIcon className="text-purple-500" />;
+                              break;
+                            case 'fitness':
+                              topicIcon = <FitnessIcon className="text-green-500" />;
+                              break;
+                            case 'finance':
+                              topicIcon = <FinanceIcon className="text-blue-500" />;
+                              break;
+                            case 'food':
+                              topicIcon = <FoodIcon className="text-orange-400" />;
+                              break;
+                            case 'game':
+                              topicIcon = <GameIcon className="text-red-400" />;
+                              break;
+                            case 'music':
+                              topicIcon = <MusicIcon className="text-indigo-400" />;
+                              break;
+                            case 'travel':
+                              topicIcon = <TravelIcon className="text-blue-400" />;
+                              break;
+                            case 'technology':
+                              topicIcon = <TechnologyIcon className="text-gray-700" />;
+                              break;
+                            case 'other':
+                              topicIcon = <OtherIcon className="text-gray-500" />;
+                              break;
+                            default:
+                              topicIcon = <FaHashtag className="text-gray-400" />;
+                          }
+                          
+                          return (
+                            <div key={key} className="space-y-2 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <div className="text-xl">{topicIcon}</div>
+                                <Label htmlFor={`topic-${key}`} className="text-sm font-medium">
+                                  {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                </Label>
+                              </div>
+                              <div className="flex items-center">
+                                <Input
+                                  id={`topic-${key}`}
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  value={value}
+                                  className="w-20"
+                                  onChange={(e) => handleFactorChange(key, e.target.value, setTopicFactors, topicFactors)}
+                                />
+                              </div>
                             </div>
-                            <div className="flex items-center space-x-3">
-                              <Input
-                                id={`topic-${key}`}
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                value={value}
-                                className="w-20"
-                                onChange={(e) => handleFactorChange(key, e.target.value, setTopicFactors, topicFactors)}
-                              />
-                              <span className="text-sm text-gray-500">Weight Factor</span>
+                          );
+                        })}
+                      </div>
+                      
+                      {/* Second row of topics */}
+                      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        {Object.entries(topicFactors).slice(5, 10).map(([key, value]) => {
+                          // Determine topic icon
+                          let topicIcon;
+                          switch(key) {
+                            case 'beauty':
+                              topicIcon = <FaRegLightbulb className="text-pink-400" />;
+                              break;
+                            case 'fashion':
+                              topicIcon = <FashionIcon className="text-purple-500" />;
+                              break;
+                            case 'fitness':
+                              topicIcon = <FitnessIcon className="text-green-500" />;
+                              break;
+                            case 'finance':
+                              topicIcon = <FinanceIcon className="text-blue-500" />;
+                              break;
+                            case 'food':
+                              topicIcon = <FoodIcon className="text-orange-400" />;
+                              break;
+                            case 'game':
+                              topicIcon = <GameIcon className="text-red-400" />;
+                              break;
+                            case 'music':
+                              topicIcon = <MusicIcon className="text-indigo-400" />;
+                              break;
+                            case 'travel':
+                              topicIcon = <TravelIcon className="text-blue-400" />;
+                              break;
+                            case 'technology':
+                              topicIcon = <TechnologyIcon className="text-gray-700" />;
+                              break;
+                            case 'other':
+                              topicIcon = <OtherIcon className="text-gray-500" />;
+                              break;
+                            default:
+                              topicIcon = <FaHashtag className="text-gray-400" />;
+                          }
+                          
+                          return (
+                            <div key={key} className="space-y-2 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <div className="text-xl">{topicIcon}</div>
+                                <Label htmlFor={`topic-${key}`} className="text-sm font-medium">
+                                  {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                </Label>
+                              </div>
+                              <div className="flex items-center">
+                                <Input
+                                  id={`topic-${key}`}
+                                  type="number"
+                                  step="0.01"
+                                  min="0"
+                                  value={value}
+                                  className="w-20"
+                                  onChange={(e) => handleFactorChange(key, e.target.value, setTopicFactors, topicFactors)}
+                                />
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
 
                     {Object.keys(customTopics).length > 0 && (
