@@ -2,14 +2,23 @@ import express, { type Request, Response, NextFunction } from 'express';
 import { registerRoutes } from './routes';
 import { setupVite, serveStatic, log } from './vite';
 import session from 'express-session';
+import connectPgSimple from 'connect-pg-simple';
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Set up session middleware
+const PGStore = connectPgSimple(session);
+const sessionStore = new PGStore({
+  conString: process.env.DATABASE_URL,
+  tableName: 'user_sessions', // Optional: specify a table name
+  createTableIfMissing: true, // Optional: creates the table if it doesn't exist
+});
+
 app.use(
   session({
+    store: sessionStore,
     secret: process.env.SESSION_SECRET || 'aspire-emv-calculator-secret',
     resave: false,
     saveUninitialized: true,
