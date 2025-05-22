@@ -13,11 +13,11 @@ app.use(
     secret: process.env.SESSION_SECRET || "aspire-emv-calculator-secret",
     resave: false,
     saveUninitialized: true,
-    cookie: { 
+    cookie: {
       secure: process.env.NODE_ENV === "production",
-      maxAge: 1000 * 60 * 60 * 24 // 24 hours
-    }
-  })
+      maxAge: 1000 * 60 * 60 * 24, // 24 hours
+    },
+  }),
 );
 
 // For demo purposes, create a mock user session if it doesn't exist
@@ -25,7 +25,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   if (!req.session.user) {
     req.session.user = {
       id: "demo-user-1",
-      username: "demo_user"
+      username: "demo_user",
     };
   }
   next();
@@ -81,15 +81,18 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
+  // ALWAYS serve the app on port 5000 -> Changed to 8080 for deployment in firebase
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
+  const port = 8080;
+  server.listen(
+    {
+      port,
+      host: "0.0.0.0",
+      reusePort: true,
+    },
+    () => {
+      log(`serving on port ${port}`);
+    },
+  );
 })();
