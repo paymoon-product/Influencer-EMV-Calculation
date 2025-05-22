@@ -1,0 +1,65 @@
+# Specifies the Node.js version.
+# See https://firebase.google.com/docs/app-hosting/specify-nodejs-version for available versions.
+runtime: nodejs20
+
+# Settings for Backend (on Cloud Run).
+# See https://firebase.google.com/docs/app-hosting/configure#cloud-run
+# Build and run commands for your Next.js app.
+# See https://firebase.google.com/docs/app-hosting/configure#build-and-run
+buildConfig:
+  buildCommand: npm run build
+runConfig:
+  minInstances: 0
+  # maxInstances: 100
+  # concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+  command: npm run start
+
+# Environment variables and secrets.
+env:
+  # Configure environment variables.
+  # See https://firebase.google.com/docs/app-hosting/configure#user-defined-environment
+  # - variable: MESSAGE
+  #   value: Hello world!
+  #   availability:
+  #     - BUILD
+  #     - RUNTIME
+
+  # Grant access to secrets in Cloud Secret Manager.
+  # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
+  # - variable: MY_SECRET
+  #   secret: mySecretRef
+
+  # Node environment
+  - variable: NODE_ENV
+    value: production
+
+  # For PostgreSQL Database
+  - variable: DATABASE_URL
+    secret: projects/emv-calculator-a1069/secrets/DATABASE_URL/versions/latest
+
+# Optional: If you have specific headers you want to apply globally
+# headers:
+#   - path: "/*" # Apply to all paths
+#     headers:
+#       - key: "X-Frame-Options"
+#         value: "SAMEORIGIN"
+#       - key: "X-Content-Type-Options"
+#         value: "nosniff"
+#       - key: "Referrer-Policy"
+#         value: "strict-origin-when-cross-origin"
+
+# Optional: If you need to define rewrites or redirects (though Next.js routing is usually preferred)
+# rewrites:
+#   - source: "/old-path"
+#     destination: "/new-path"
+# redirects:
+#   - source: "/another-old-path"
+#     destination: "/another-new-path"
+#     type: 301 # Permanent redirect
+
+# The publicDir is usually handled by Next.js's build output and App Hosting's framework awareness.
+# If you have a specific 'public' folder with static assets that Next.js doesn't process,
+# you might uncomment this, but typically it's not needed for standard Next.js App Hosting.
+# publicDir: public
