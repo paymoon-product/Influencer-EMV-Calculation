@@ -2,20 +2,13 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
-  ArrowLeft, FileDown, Eye, Calendar, Sliders, 
-  Settings, BookOpen, Clock, Download, FileSpreadsheet, FileText
+  FileDown, Eye, Calendar, Download, FileSpreadsheet, FileText
 } from "lucide-react";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu";
-import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { EMVCalculation } from "@/lib/emv-data";
 import { exportCalculationsToCSV, exportCalculationsToPDF } from "@/lib/export-utils";
+import { MainLayout } from "@/components/MainLayout";
 import {
   Table,
   TableBody,
@@ -30,37 +23,32 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { EMVResults } from "@/components/EMVResults";
 
 export default function EMVHistoryPage() {
-  const { toast } = useToast();
   const [calculations, setCalculations] = useState<EMVCalculation[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCalculation, setSelectedCalculation] = useState<EMVCalculation | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchCalculations = async () => {
       try {
-        setLoading(true);
-        const response = await apiRequest("GET", "/api/emv/history");
-        
-        if (response.ok) {
-          const data = await response.json();
-          setCalculations(data.calculations || []);
-        } else {
-          // Handle unauthorized or error cases
-          toast({
-            title: "Error",
-            description: "Failed to fetch calculation history. Please log in to view your calculations.",
-            variant: "destructive",
-          });
+        const response = await apiRequest({
+          endpoint: '/api/emv/history',
+          method: 'GET',
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch calculation history');
         }
+
+        const data = await response.json();
+        setCalculations(data.calculations || []);
       } catch (error) {
         toast({
           title: "Error",
-          description: "Failed to fetch calculation history.",
+          description: "Failed to load calculation history",
           variant: "destructive",
         });
       } finally {
@@ -70,62 +58,6 @@ export default function EMVHistoryPage() {
 
     fetchCalculations();
   }, [toast]);
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(date);
-  };
-
-  const handleExport = () => {
-    if (calculations.length === 0) return;
-
-    // Create CSV content
-    const headers = [
-      "ID",
-      "Date",
-      "Platform",
-      "Post Type",
-      "Creator Size",
-      "Content Topic",
-      "Total EMV",
-    ];
-
-    const rows = calculations.map((calc) => [
-      calc.id.toString(),
-      formatDate(calc.date),
-      calc.result.platform,
-      calc.result.postType,
-      calc.parameters.creatorSize,
-      calc.parameters.contentTopic,
-      `$${calc.result.totalEMV.toFixed(2)}`,
-    ]);
-
-    // Convert to CSV
-    const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
-
-    // Create a download link
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute(
-      "download",
-      `EMV_Calculation_History_${new Date().toISOString().slice(0, 10)}.csv`
-    );
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const viewDetails = (calculation: EMVCalculation) => {
-    setSelectedCalculation(calculation);
-  };
 
   const handleExportCSV = () => {
     if (calculations.length === 0) {
@@ -177,185 +109,161 @@ export default function EMVHistoryPage() {
     }
   };
 
+  const viewDetails = (calculation: EMVCalculation) => {
+    setSelectedCalculation(calculation);
+  };
+
+  if (loading) {
+    return (
+      <MainLayout>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">EMV Calculation History</h1>
+          <p className="mt-2 text-gray-600">
+            View and manage your previous EMV calculations
+          </p>
+        </div>
+        <div className="flex justify-center py-12">
+          <div className="text-gray-600">Loading your calculation history...</div>
+        </div>
+      </MainLayout>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="fixed top-4 right-4 z-50">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="flex items-center space-x-1 bg-white shadow-lg">
-              <Sliders className="h-4 w-4" />
-              <span>Options</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-              <Link href="/settings" className="flex items-center w-full">
-                <Settings className="h-4 w-4 mr-2" />
-                <span>Settings</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href="/reference" className="flex items-center w-full">
-                <BookOpen className="h-4 w-4 mr-2" />
-                <span>EMV Reference Guide</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href="/changelog" className="flex items-center w-full">
-                <Clock className="h-4 w-4 mr-2" />
-                <span>Change Log</span>
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <MainLayout>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">EMV Calculation History</h1>
+        <p className="mt-2 text-gray-600">
+          View and manage your previous EMV calculations
+        </p>
       </div>
 
-      <main className="py-8 px-4 sm:px-6 lg:px-8">
-        <div className="container mx-auto">
+      {calculations.length === 0 ? (
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center py-8">
+              <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No calculations yet</h3>
+              <p className="text-gray-600">Start by creating your first EMV calculation.</p>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-gray-600">
+              {calculations.length} calculation{calculations.length !== 1 ? 's' : ''} found
+            </div>
+            <div className="flex space-x-2">
+              <Button onClick={handleExportCSV} variant="outline" size="sm">
+                <FileSpreadsheet className="h-4 w-4 mr-2" />
+                Export CSV
+              </Button>
+              <Button onClick={handleExportPDF} variant="outline" size="sm">
+                <FileText className="h-4 w-4 mr-2" />
+                Export PDF
+              </Button>
+            </div>
+          </div>
+
           <Card>
-            <CardContent className="p-6">
-              {loading ? (
-                <div className="flex justify-center py-12">
-                  <div className="flex flex-col items-center">
-                    <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
-                    <p className="mt-4 text-gray-500">Loading calculations...</p>
-                  </div>
-                </div>
-              ) : calculations.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <Calendar className="h-12 w-12 text-gray-300 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-1">No calculations found</h3>
-                  <p className="text-gray-500 mb-4">
-                    You haven't performed any EMV calculations yet.
-                  </p>
-                  <Link href="/">
-                    <Button>Create Your First Calculation</Button>
-                  </Link>
-                </div>
-              ) : (
-                <>
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-primary-900">
-                      Your EMV Calculations
-                    </h3>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm">
-                          <Download className="h-4 w-4 mr-2" />
-                          Export Data
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Platform</TableHead>
+                    <TableHead>Post Type</TableHead>
+                    <TableHead>Creator Size</TableHead>
+                    <TableHead>Total EMV</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {calculations.map((calculation) => (
+                    <TableRow key={calculation.id}>
+                      <TableCell>
+                        {new Date(calculation.date).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="capitalize">
+                        {calculation.parameters.platform}
+                      </TableCell>
+                      <TableCell className="capitalize">
+                        {calculation.parameters.postType}
+                      </TableCell>
+                      <TableCell>{calculation.parameters.creatorSize}</TableCell>
+                      <TableCell className="font-semibold">
+                        ${calculation.result.totalEMV.toLocaleString()}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => viewDetails(calculation)}
+                          variant="outline"
+                          size="sm"
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          View
                         </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent>
-                        <DropdownMenuItem onClick={handleExportCSV}>
-                          <FileSpreadsheet className="h-4 w-4 mr-2" />
-                          Export as CSV
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={handleExportPDF}>
-                          <FileText className="h-4 w-4 mr-2" />
-                          Export as PDF Report
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Date</TableHead>
-                          <TableHead>Platform</TableHead>
-                          <TableHead>Post Type</TableHead>
-                          <TableHead>Creator Size</TableHead>
-                          <TableHead>Topic</TableHead>
-                          <TableHead>Total EMV</TableHead>
-                          <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {calculations.map((calculation) => (
-                          <TableRow key={calculation.id}>
-                            <TableCell className="font-medium">
-                              {formatDate(calculation.date)}
-                            </TableCell>
-                            <TableCell>
-                              {calculation.result.platform.charAt(0).toUpperCase() +
-                                calculation.result.platform.slice(1)}
-                            </TableCell>
-                            <TableCell>
-                              {calculation.result.postType.charAt(0).toUpperCase() +
-                                calculation.result.postType.slice(1)}
-                            </TableCell>
-                            <TableCell>
-                              {calculation.parameters.creatorSize
-                                .replace("_", " ")
-                                .replace(/\b\w/g, (l) => l.toUpperCase())}
-                            </TableCell>
-                            <TableCell>
-                              {calculation.parameters.contentTopic
-                                .replace("_", " ")
-                                .replace(/\b\w/g, (l) => l.toUpperCase())}
-                            </TableCell>
-                            <TableCell className="font-semibold text-green-600">
-                              ${calculation.result.totalEMV.toFixed(2)}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => viewDetails(calculation)}
-                                    className="h-8 w-8 p-0"
-                                  >
-                                    <span className="sr-only">View details</span>
-                                    <Eye className="h-4 w-4" />
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
-                                  <DialogHeader>
-                                    <DialogTitle>EMV Calculation Details</DialogTitle>
-                                  </DialogHeader>
-                                  {selectedCalculation && (
-                                    <div className="pt-4">
-                                      <p className="text-sm text-gray-500 mb-4">
-                                        Calculation from {formatDate(selectedCalculation.date)}
-                                      </p>
-                                      <EMVResults results={selectedCalculation.result} />
-                                    </div>
-                                  )}
-                                </DialogContent>
-                              </Dialog>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                  
-                  {calculations.length > 0 && (
-                    <div className="mt-6 flex justify-end">
-                      <Button
-                        onClick={handleExport}
-                        variant="outline"
-                        size="sm"
-                        className="flex items-center space-x-1"
-                      >
-                        <FileDown className="h-4 w-4 mr-1" />
-                        <span>Export All</span>
-                      </Button>
-                    </div>
-                  )}
-                </>
-              )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </div>
-      </main>
+      )}
 
-      <footer className="bg-white border-t border-primary-200 py-4 px-6">
-        <div className="container mx-auto text-center text-primary-500 text-sm">
-          © {new Date().getFullYear()} Aspire Influencer Marketing Platform | EMV Calculator
-        </div>
-      </footer>
-    </div>
+      {selectedCalculation && (
+        <Dialog open={!!selectedCalculation} onOpenChange={() => setSelectedCalculation(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>EMV Calculation Details</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-600">Platform</label>
+                  <div className="text-lg capitalize">{selectedCalculation.parameters.platform}</div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-600">Post Type</label>
+                  <div className="text-lg capitalize">{selectedCalculation.parameters.postType}</div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-600">Creator Size</label>
+                  <div className="text-lg">{selectedCalculation.parameters.creatorSize}</div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-600">Content Topic</label>
+                  <div className="text-lg capitalize">{selectedCalculation.parameters.contentTopic}</div>
+                </div>
+              </div>
+              
+              <div className="border-t pt-4">
+                <h4 className="text-lg font-semibold mb-3">EMV Breakdown</h4>
+                <div className="space-y-2">
+                  {selectedCalculation.result.breakdown.map((item, index) => (
+                    <div key={index} className="flex justify-between items-center py-2 border-b">
+                      <span className="capitalize">{item.type}</span>
+                      <div className="text-right">
+                        <div className="font-semibold">${item.emv.toLocaleString()}</div>
+                        <div className="text-sm text-gray-600">{item.count} × ${item.baseValue}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex justify-between items-center pt-4 border-t-2 border-gray-300">
+                  <span className="text-lg font-bold">Total EMV</span>
+                  <span className="text-xl font-bold text-primary-600">
+                    ${selectedCalculation.result.totalEMV.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+    </MainLayout>
   );
 }
