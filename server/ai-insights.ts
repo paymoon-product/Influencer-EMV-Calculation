@@ -120,7 +120,13 @@ Provide specific, actionable insights based on the actual data patterns.`;
       throw new Error('Unexpected response format from AI service');
     }
 
-    const insights = JSON.parse(content.text) as InsightsReport;
+    // Clean the response text to extract JSON from markdown blocks
+    let responseText = content.text;
+    if (responseText.includes('```json')) {
+      responseText = responseText.replace(/```json\s*/, '').replace(/```\s*$/, '').trim();
+    }
+    
+    const insights = JSON.parse(responseText) as InsightsReport;
     return insights;
   } catch (error) {
     console.error('Error generating AI insights:', error);

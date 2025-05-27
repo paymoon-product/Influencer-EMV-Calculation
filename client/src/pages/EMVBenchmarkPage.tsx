@@ -44,7 +44,7 @@ export default function EMVBenchmarkPage() {
     queryKey: ['/api/emv/history'],
   });
   
-  const calculations = historyData?.calculations || [];
+  const calculations = (historyData as any)?.calculations || [];
 
   // Fetch all benchmarks
   const { data: benchmarks = [], isLoading: benchmarksLoading } = useQuery({
