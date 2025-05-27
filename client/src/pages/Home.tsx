@@ -16,38 +16,7 @@ export default function Home() {
                 <h2 className="text-2xl font-semibold text-primary-900 mb-2">Earned Media Value (EMV) Calculator</h2>
                 <p className="text-primary-600">Calculate the monetary impact of organic social media engagement based on our updated EMV framework.</p>
               </div>
-              <div className="flex space-x-3">
-                <Link href="/insights">
-                  <Button variant="outline" className="flex items-center space-x-2">
-                    <Sparkles className="h-4 w-4" />
-                    <span>AI Insights</span>
-                  </Button>
-                </Link>
-                <Link href="/benchmarks">
-                  <Button variant="outline" className="flex items-center space-x-2">
-                    <Target className="h-4 w-4" />
-                    <span>Benchmarks</span>
-                  </Button>
-                </Link>
-                <Link href="/settings">
-                  <Button variant="outline" className="flex items-center space-x-2">
-                    <User className="h-4 w-4" />
-                    <span>Settings</span>
-                  </Button>
-                </Link>
-                <Link href="/reference">
-                  <Button variant="outline" className="flex items-center space-x-2">
-                    <Users className="h-4 w-4" />
-                    <span>Reference</span>
-                  </Button>
-                </Link>
-                <Link href="/history">
-                  <Button variant="outline" className="flex items-center space-x-2">
-                    <User className="h-4 w-4" />
-                    <span>History</span>
-                  </Button>
-                </Link>
-              </div>
+
             </div>
           </div>
           
