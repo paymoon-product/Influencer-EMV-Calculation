@@ -10,6 +10,8 @@ import EMVSettingsPage from "@/pages/EMVSettingsPage";
 import EMVHistoryPage from "@/pages/EMVHistoryPage";
 import EMVBulkCalculationPage from "@/pages/EMVBulkCalculationPage";
 import EMVChangeLogPage from "@/pages/EMVChangeLogPage";
+import EMVInsightsPage from "@/pages/EMVInsightsPage";
+import EMVBenchmarkPage from "@/pages/EMVBenchmarkPage";
 
 function Router() {
   return (
@@ -20,6 +22,8 @@ function Router() {
       <Route path="/history" component={EMVHistoryPage} />
       <Route path="/bulk" component={EMVBulkCalculationPage} />
       <Route path="/changelog" component={EMVChangeLogPage} />
+      <Route path="/insights" component={EMVInsightsPage} />
+      <Route path="/benchmarks" component={EMVBenchmarkPage} />
       <Route component={NotFound} />
     </Switch>
   );

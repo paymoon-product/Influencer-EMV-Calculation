@@ -2,6 +2,8 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { emvParametersSchema, emvResultSchema } from "@shared/schema";
+import { generatePersonalizedInsights, generateSingleCalculationInsight } from "./ai-insights";
+import { compareWithBenchmark, getAllBenchmarks, getBenchmarksByPlatform } from "./benchmark-service";
 import { z } from "zod";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
@@ -44,6 +46,100 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ calculations });
     } catch (error) {
       res.status(500).json({ error: "Failed to retrieve EMV calculation history" });
+    }
+  });
+
+  // AI Insights endpoint
+  app.get("/api/emv/insights", async (req: Request, res: Response) => {
+    try {
+      const calculations = await storage.getEmvCalculationsByUser("demo-user");
+      
+      if (calculations.length === 0) {
+        return res.json({
+          summary: "No calculation data available for analysis.",
+          insights: [],
+          keyMetrics: {
+            totalEmv: 0,
+            averageEmv: 0,
+            topPerformingPlatform: "N/A",
+            topPerformingContent: "N/A",
+            growthRate: 0
+          },
+          recommendations: ["Start by creating your first EMV calculation to receive personalized insights."]
+        });
+      }
+
+      const insightsReport = await generatePersonalizedInsights(calculations);
+      res.json(insightsReport);
+    } catch (error) {
+      console.error("Error generating insights:", error);
+      res.status(500).json({ error: "Failed to generate AI insights" });
+    }
+  });
+
+  // Single calculation insight endpoint
+  app.post("/api/emv/calculation-insight", async (req: Request, res: Response) => {
+    try {
+      const { calculationId } = req.body;
+      
+      if (!calculationId) {
+        return res.status(400).json({ error: "Calculation ID is required" });
+      }
+
+      const calculation = await storage.getEmvCalculation(calculationId);
+      
+      if (!calculation) {
+        return res.status(404).json({ error: "Calculation not found" });
+      }
+
+      const insight = await generateSingleCalculationInsight(calculation);
+      res.json({ insight });
+    } catch (error) {
+      console.error("Error generating calculation insight:", error);
+      res.status(500).json({ error: "Failed to generate calculation insight" });
+    }
+  });
+
+  // Benchmark comparison endpoints
+  app.post("/api/emv/benchmark-comparison", async (req: Request, res: Response) => {
+    try {
+      const { calculationId } = req.body;
+      
+      if (!calculationId) {
+        return res.status(400).json({ error: "Calculation ID is required" });
+      }
+
+      const calculation = await storage.getEmvCalculation(calculationId);
+      if (!calculation) {
+        return res.status(404).json({ error: "Calculation not found" });
+      }
+
+      const comparison = compareWithBenchmark(calculation);
+      if (!comparison) {
+        return res.status(404).json({ error: "No benchmark data available for this calculation" });
+      }
+
+      res.json(comparison);
+    } catch (error) {
+      console.error("Error generating benchmark comparison:", error);
+      res.status(500).json({ error: "Failed to generate benchmark comparison" });
+    }
+  });
+
+  app.get("/api/benchmarks", async (req: Request, res: Response) => {
+    try {
+      const { platform } = req.query;
+      
+      if (platform) {
+        const benchmarks = getBenchmarksByPlatform(platform as string);
+        res.json(benchmarks);
+      } else {
+        const benchmarks = getAllBenchmarks();
+        res.json(benchmarks);
+      }
+    } catch (error) {
+      console.error("Error fetching benchmarks:", error);
+      res.status(500).json({ error: "Failed to fetch benchmark data" });
     }
   });
 

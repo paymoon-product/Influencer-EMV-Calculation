@@ -14,58 +14,39 @@ import {
 
 export default function EMVReferencePage() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-white border-b border-primary-200 py-4 px-6">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <img src="/icon.png" alt="Aspire Logo" className="h-6 w-6" />
-            <h1 className="text-xl font-semibold text-primary-900">Aspire EMV Calculator</h1>
-          </div>
-          <div className="flex items-center space-x-2">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="flex items-center space-x-1">
-                  <Sliders className="h-4 w-4" />
-                  <span>Options</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <Link href="/settings" className="flex items-center w-full">
-                    <Settings className="h-4 w-4 mr-2" />
-                    <span>Settings</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/reference" className="flex items-center w-full">
-                    <BookOpen className="h-4 w-4 mr-2" />
-                    <span>EMV Reference Guide</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/changelog" className="flex items-center w-full">
-                    <Clock className="h-4 w-4 mr-2" />
-                    <span>Change Log</span>
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-      </header>
-      
-      <div className="bg-gray-50 py-2 px-6 border-b border-gray-200">
-        <div className="container mx-auto flex items-center">
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="flex items-center space-x-1 text-gray-600">
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back to Calculator</span>
+    <div className="min-h-screen bg-gray-50">
+      <div className="fixed top-4 right-4 z-50">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="flex items-center space-x-1 bg-white shadow-lg">
+              <Sliders className="h-4 w-4" />
+              <span>Options</span>
             </Button>
-          </Link>
-        </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>
+              <Link href="/settings" className="flex items-center w-full">
+                <Settings className="h-4 w-4 mr-2" />
+                <span>Settings</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/reference" className="flex items-center w-full">
+                <BookOpen className="h-4 w-4 mr-2" />
+                <span>EMV Reference Guide</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/changelog" className="flex items-center w-full">
+                <Clock className="h-4 w-4 mr-2" />
+                <span>Change Log</span>
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
-      <main className="flex-1 py-8 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <main className="py-8 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
           <div className="mb-8">
             <h2 className="text-2xl font-semibold text-primary-900 mb-2">EMV Reference Values</h2>
