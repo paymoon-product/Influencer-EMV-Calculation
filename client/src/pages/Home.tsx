@@ -1,9 +1,15 @@
 import { EMVCalculator } from "@/components/EMVCalculator";
-import { User, Users, Sparkles, Target } from "lucide-react";
+import { User, Users, Sparkles, Target, CloudLightning, Settings, BookOpen, Clock } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MainLayout } from "@/components/MainLayout";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 export default function Home() {
   return (
