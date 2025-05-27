@@ -4,9 +4,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingUp, TrendingDown, Target, Award, BarChart3, Users, Zap, Info } from "lucide-react";
+import { TrendingUp, TrendingDown, Target, Award, BarChart3, Users, Zap, Info, Eye } from "lucide-react";
 import { MainLayout } from "@/components/MainLayout";
 import { apiRequest } from "@/lib/queryClient";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface BenchmarkComparison {
   calculation: any;
@@ -37,13 +52,16 @@ interface BenchmarkData {
 export default function EMVBenchmarkPage() {
   const [selectedCalculationId, setSelectedCalculationId] = useState<number | null>(null);
   const [comparisonResult, setComparisonResult] = useState<BenchmarkComparison | null>(null);
+  const [showComparisonModal, setShowComparisonModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedCalculation, setSelectedCalculation] = useState<any>(null);
 
   // Fetch calculation history
   const { data: historyData, isLoading: calculationsLoading } = useQuery({
     queryKey: ['/api/emv/history'],
   });
   
-  const calculations = historyData?.calculations || [];
+  const calculations = (historyData as any)?.calculations || [];
 
   // Fetch all benchmarks
   const { data: benchmarks = [], isLoading: benchmarksLoading } = useQuery({
@@ -101,6 +119,11 @@ export default function EMVBenchmarkPage() {
   const handleCompare = (calculationId: number) => {
     setSelectedCalculationId(calculationId);
     compareMutation.mutate(calculationId);
+  };
+
+  const handleViewDetails = (calculation: any) => {
+    setSelectedCalculation(calculation);
+    setShowDetailsModal(true);
   };
 
   const getPerformanceBadge = (performance: string) => {
@@ -169,7 +192,7 @@ export default function EMVBenchmarkPage() {
         <TabsContent value="compare" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Compare Your EMV Performance</CardTitle>
+              <CardTitle>EMV Calculation History & Performance Comparison</CardTitle>
             </CardHeader>
             <CardContent>
               {calculationsLoading ? (
@@ -182,116 +205,70 @@ export default function EMVBenchmarkPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <h3 className="font-semibold mb-4">Select a calculation to compare:</h3>
-                  <div className="grid gap-4">
-                    {calculations.map((calculation: any) => (
-                      <div key={calculation.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div>
-                          <p className="font-medium">
-                            {new Date(calculation.date).toLocaleDateString()} - 
-                            <span className="capitalize ml-1">{calculation.parameters?.platform}</span> - 
-                            <span className="capitalize ml-1">{calculation.parameters?.postType}</span>
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            EMV: ${calculation.result?.totalEMV?.toLocaleString() || 'N/A'}
-                          </p>
-                        </div>
-                        <Button 
-                          onClick={() => handleCompare(calculation.id)}
-                          disabled={compareMutation.isPending}
-                        >
-                          {compareMutation.isPending && selectedCalculationId === calculation.id 
-                            ? 'Comparing...' 
-                            : 'Compare'
-                          }
-                        </Button>
-                      </div>
-                    ))}
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-semibold">Your EMV Calculations ({calculations.length})</h3>
+                    <p className="text-sm text-gray-600">Click "Compare" to see how your performance ranks against industry benchmarks</p>
                   </div>
-                </div>
-              )}
-
-              {comparisonResult && (
-                <div className="mt-8 space-y-6">
-                  <div className="border-t pt-6">
-                    <h3 className="text-lg font-semibold mb-4">Comparison Results</h3>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                      <Card>
-                        <CardContent className="pt-4">
-                          <div className="text-center">
-                            <p className="text-sm text-gray-600">Your EMV</p>
-                            <p className="text-2xl font-bold text-blue-600">
-                              ${comparisonResult.comparison.userEmv.toLocaleString()}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                      
-                      <Card>
-                        <CardContent className="pt-4">
-                          <div className="text-center">
-                            <p className="text-sm text-gray-600">Industry Average</p>
-                            <p className="text-2xl font-bold text-gray-600">
-                              ${comparisonResult.comparison.benchmarkEmv.toLocaleString()}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                      
-                      <Card>
-                        <CardContent className="pt-4">
-                          <div className="text-center">
-                            <p className="text-sm text-gray-600">Performance</p>
-                            <div className="mt-2">
-                              {getPerformanceBadge(comparisonResult.comparison.performance)}
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <Card>
-                        <CardContent className="pt-4">
-                          <h4 className="font-semibold mb-3">Performance Insights</h4>
-                          <div className="space-y-2">
-                            <div className="flex justify-between">
-                              <span>Ranking:</span>
-                              <span className="font-medium">{comparisonResult.comparison.ranking}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>Difference from average:</span>
-                              <span className={`font-medium ${comparisonResult.comparison.percentileDifference > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                {comparisonResult.comparison.percentileDifference > 0 ? '+' : ''}
-                                {comparisonResult.comparison.percentileDifference}%
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>Improvement potential:</span>
-                              <span className="font-medium text-orange-600">
-                                +{comparisonResult.comparison.improvementPotential}%
-                              </span>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card>
-                        <CardContent className="pt-4">
-                          <h4 className="font-semibold mb-3">Recommendations</h4>
-                          <ul className="space-y-2">
-                            {comparisonResult.recommendations.map((rec, index) => (
-                              <li key={index} className="flex items-start space-x-2">
-                                <TrendingUp className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                                <span className="text-sm">{rec}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </div>
+                  
+                  <Card>
+                    <CardContent className="p-0">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Date</TableHead>
+                            <TableHead>Platform</TableHead>
+                            <TableHead>Post Type</TableHead>
+                            <TableHead>Creator Size</TableHead>
+                            <TableHead>Content Topic</TableHead>
+                            <TableHead>Total EMV</TableHead>
+                            <TableHead>Actions</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {calculations.map((calculation: any) => (
+                            <TableRow key={calculation.id}>
+                              <TableCell>
+                                {new Date(calculation.date).toLocaleDateString()}
+                              </TableCell>
+                              <TableCell className="capitalize">
+                                {calculation.parameters?.platform}
+                              </TableCell>
+                              <TableCell className="capitalize">
+                                {calculation.parameters?.postType}
+                              </TableCell>
+                              <TableCell>{calculation.parameters?.creatorSize}</TableCell>
+                              <TableCell className="capitalize">{calculation.parameters?.contentTopic}</TableCell>
+                              <TableCell className="font-semibold">
+                                ${calculation.result?.totalEMV?.toLocaleString() || 'N/A'}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex space-x-2">
+                                  <Button
+                                    onClick={() => handleCompare(calculation.id)}
+                                    disabled={compareMutation.isPending}
+                                    size="sm"
+                                  >
+                                    {compareMutation.isPending && selectedCalculationId === calculation.id 
+                                      ? 'Comparing...' 
+                                      : 'Compare'
+                                    }
+                                  </Button>
+                                  <Button
+                                    onClick={() => handleViewDetails(calculation)}
+                                    variant="outline"
+                                    size="sm"
+                                  >
+                                    <Eye className="h-4 w-4 mr-1" />
+                                    View Details
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
                 </div>
               )}
             </CardContent>
