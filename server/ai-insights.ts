@@ -123,7 +123,12 @@ Provide specific, actionable insights based on the actual data patterns.`;
     // Clean the response text to extract JSON from markdown blocks
     let responseText = content.text;
     if (responseText.includes('```json')) {
-      responseText = responseText.replace(/```json\s*/, '').replace(/```\s*$/, '').trim();
+      const jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/);
+      if (jsonMatch) {
+        responseText = jsonMatch[1].trim();
+      } else {
+        responseText = responseText.replace(/```json\s*/, '').replace(/```\s*$/, '').trim();
+      }
     }
     
     const insights = JSON.parse(responseText) as InsightsReport;

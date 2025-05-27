@@ -1,5 +1,5 @@
 import { EMVCalculator } from "@/components/EMVCalculator";
-import { User, Users, Sparkles, Target } from "lucide-react";
+import { User, Users, Sparkles, Target, Settings, BookOpen, Clock } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -27,6 +27,24 @@ export default function Home() {
                   <Button variant="outline" className="flex items-center space-x-2">
                     <Target className="h-4 w-4" />
                     <span>Benchmarks</span>
+                  </Button>
+                </Link>
+                <Link href="/settings">
+                  <Button variant="outline" className="flex items-center space-x-2">
+                    <User className="h-4 w-4" />
+                    <span>Settings</span>
+                  </Button>
+                </Link>
+                <Link href="/reference">
+                  <Button variant="outline" className="flex items-center space-x-2">
+                    <Users className="h-4 w-4" />
+                    <span>Reference</span>
+                  </Button>
+                </Link>
+                <Link href="/history">
+                  <Button variant="outline" className="flex items-center space-x-2">
+                    <User className="h-4 w-4" />
+                    <span>History</span>
                   </Button>
                 </Link>
               </div>
