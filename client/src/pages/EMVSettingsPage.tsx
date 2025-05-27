@@ -10,7 +10,14 @@ import { emvData } from "@/lib/emv-data";
 import { MainLayout } from "@/components/MainLayout";
 
 export default function EMVSettingsPage() {
-  const [baseValues, setBaseValues] = useState(emvData.baseValues);
+  const [baseValues, setBaseValues] = useState({
+    like: 0.20,
+    comment: 4.50,
+    share: 3.00,
+    save: 3.50,
+    impression: 0.08,
+    view: 0.12
+  });
   const [customTopics, setCustomTopics] = useState<Array<{name: string, factor: number}>>([]);
   const { toast } = useToast();
 
@@ -18,7 +25,14 @@ export default function EMVSettingsPage() {
     const savedSettings = localStorage.getItem('emv-settings');
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
-      setBaseValues(settings.baseValues || emvData.baseValues);
+      setBaseValues(settings.baseValues || {
+        like: 0.20,
+        comment: 4.50,
+        share: 3.00,
+        save: 3.50,
+        impression: 0.08,
+        view: 0.12
+      });
       setCustomTopics(settings.customTopics || []);
     }
   }, []);
@@ -36,7 +50,15 @@ export default function EMVSettingsPage() {
   };
 
   const resetToDefaults = () => {
-    setBaseValues(emvData.baseValues);
+    const defaultValues = {
+      like: 0.20,
+      comment: 4.50,
+      share: 3.00,
+      save: 3.50,
+      impression: 0.08,
+      view: 0.12
+    };
+    setBaseValues(defaultValues);
     setCustomTopics([]);
     localStorage.removeItem('emv-settings');
     toast({

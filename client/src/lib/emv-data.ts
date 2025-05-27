@@ -56,6 +56,12 @@ export const emvData = {
       }
     }
   },
+  platformFactors: {
+    instagram: 1.0,
+    tiktok: 1.4,
+    youtube: 1.1,
+    pinterest: 0.7
+  },
   creatorFactors: {
     brand_fan: 0.8,
     nano: 0.9,

@@ -68,7 +68,7 @@ export default function EMVReferencePage() {
           <CardContent className="pt-6">
             <h3 className="text-xl font-semibold mb-4">Creator Size Categories</h3>
             <Accordion type="single" collapsible className="w-full">
-              {Object.entries(emvData.creatorSizeFactors).map(([size, factor]) => (
+              {Object.entries(emvData.creatorFactors).map(([size, factor]) => (
                 <AccordionItem key={size} value={size}>
                   <AccordionTrigger>
                     {size} (Factor: {factor}x)
