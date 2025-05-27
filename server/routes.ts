@@ -52,7 +52,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Insights endpoint
   app.get("/api/emv/insights", async (req: Request, res: Response) => {
     try {
-      const calculations = await storage.getEmvCalculationsByUser("demo-user");
+      const userId = req.session?.user?.id || "demo-user-1";
+      const calculations = await storage.getEmvCalculationsByUser(userId);
       
       if (calculations.length === 0) {
         return res.json({
@@ -66,6 +67,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
             growthRate: 0
           },
           recommendations: ["Start by creating your first EMV calculation to receive personalized insights."]
+        });
+      }
+
+      // Check if AI service is available
+      if (!process.env.ANTHROPIC_API_KEY) {
+        return res.json({
+          summary: "AI insights require API configuration. Please set up your Anthropic API key to enable AI-powered analysis.",
+          insights: [],
+          keyMetrics: {
+            totalEmv: calculations.reduce((sum, calc) => sum + (calc.result as any).totalEMV, 0),
+            averageEmv: calculations.length > 0 ? calculations.reduce((sum, calc) => sum + (calc.result as any).totalEMV, 0) / calculations.length : 0,
+            topPerformingPlatform: "Instagram",
+            topPerformingContent: "Posts",
+            growthRate: 0
+          },
+          recommendations: ["Set up AI configuration to unlock detailed insights"]
         });
       }
 

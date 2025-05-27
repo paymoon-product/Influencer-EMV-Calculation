@@ -65,7 +65,7 @@ app.use((req, res, next) => {
   try {
     const server = await registerRoutes(app);
 
-    // Enhanced error handler that prevents crashes
+    // Improved error handler that doesn't crash the server
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Internal Server Error";
@@ -73,21 +73,16 @@ app.use((req, res, next) => {
       if (!res.headersSent) {
         res.status(status).json({ message });
       }
-      console.error('Server error handled:', message);
+      console.error('Server error handled:', {
+        status,
+        message,
+        stack: err.stack
+      });
     });
 
-    // Add global error handlers to prevent crashes
-    process.on('uncaughtException', (error) => {
-      console.error('Uncaught Exception:', error);
-      // Don't exit - keep server running
-    });
-
-    process.on('unhandledRejection', (reason, promise) => {
-      console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-      // Don't exit - keep server running
-    });
-
-    // Setup vite/static serving
+    // importantly only setup vite in development and after
+    // setting up all the other routes so the catch-all route
+    // doesn't interfere with the other routes
     if (app.get("env") === "development") {
       await setupVite(app, server);
     } else {
@@ -106,8 +101,7 @@ app.use((req, res, next) => {
       },
     );
   } catch (error) {
-    console.error('Failed to start server:', error);
-    // Exit only on startup failure
+    console.error('Fatal server error:', error);
     process.exit(1);
   }
 })();

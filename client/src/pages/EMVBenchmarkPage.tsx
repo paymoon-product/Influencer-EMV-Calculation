@@ -40,9 +40,11 @@ export default function EMVBenchmarkPage() {
   const [selectedCalculationId, setSelectedCalculationId] = useState<number | null>(null);
 
   // Fetch calculation history
-  const { data: calculations = [], isLoading: calculationsLoading } = useQuery({
+  const { data: historyData, isLoading: calculationsLoading } = useQuery({
     queryKey: ['/api/emv/history'],
   });
+  
+  const calculations = historyData?.calculations || [];
 
   // Fetch all benchmarks
   const { data: benchmarks = [], isLoading: benchmarksLoading } = useQuery({
