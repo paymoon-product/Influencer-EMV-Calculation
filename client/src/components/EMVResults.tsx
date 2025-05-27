@@ -16,10 +16,10 @@ type EMVResultsProps = {
 };
 
 export function EMVResults({ results, isSaving = false }: EMVResultsProps) {
-  const handleExport = () => {
+  const handleExportCSV = () => {
     if (!results) return;
 
-    // Create CSV content
+    // Create CSV content for current results
     const headers = ["Parameter", "Value"];
     const rows = [
       ["Platform", results.platform],
@@ -71,10 +71,24 @@ export function EMVResults({ results, isSaving = false }: EMVResultsProps) {
                   Saving...
                 </span>
               )}
-              <Button variant="outline" size="sm" onClick={handleExport} disabled={isSaving}>
-                <Download className="h-4 w-4 mr-1" />
-                Export
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" disabled={isSaving}>
+                    <Download className="h-4 w-4 mr-1" />
+                    Export
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={handleExportCSV}>
+                    <FileSpreadsheet className="h-4 w-4 mr-2" />
+                    Export as CSV
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => window.print()}>
+                    <FileText className="h-4 w-4 mr-2" />
+                    Print/Save as PDF
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           )}
         </div>

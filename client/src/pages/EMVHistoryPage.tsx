@@ -3,12 +3,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
   ArrowLeft, FileDown, Eye, Calendar, Sliders, 
-  Settings, BookOpen, Clock
+  Settings, BookOpen, Clock, Download, FileSpreadsheet, FileText
 } from "lucide-react";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 import { Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { EMVCalculation } from "@/lib/emv-data";
+import { exportCalculationsToCSV, exportCalculationsToPDF } from "@/lib/export-utils";
 import {
   Table,
   TableBody,
@@ -17,12 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
+
 import {
   Dialog,
   DialogContent,
@@ -125,6 +127,56 @@ export default function EMVHistoryPage() {
     setSelectedCalculation(calculation);
   };
 
+  const handleExportCSV = () => {
+    if (calculations.length === 0) {
+      toast({
+        title: "No data to export",
+        description: "Please create some EMV calculations first.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      exportCalculationsToCSV(calculations as any);
+      toast({
+        title: "Export successful",
+        description: "CSV file has been downloaded.",
+      });
+    } catch (error) {
+      toast({
+        title: "Export failed",
+        description: "There was an error exporting the data.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleExportPDF = () => {
+    if (calculations.length === 0) {
+      toast({
+        title: "No data to export",
+        description: "Please create some EMV calculations first.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      exportCalculationsToPDF(calculations as any);
+      toast({
+        title: "Export initiated",
+        description: "PDF report is being generated.",
+      });
+    } catch (error) {
+      toast({
+        title: "Export failed",
+        description: "There was an error generating the PDF.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="fixed top-4 right-4 z-50">
@@ -182,9 +234,29 @@ export default function EMVHistoryPage() {
                 </div>
               ) : (
                 <>
-                  <h3 className="text-lg font-semibold text-primary-900 mb-4">
-                    Your EMV Calculations
-                  </h3>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold text-primary-900">
+                      Your EMV Calculations
+                    </h3>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm">
+                          <Download className="h-4 w-4 mr-2" />
+                          Export Data
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem onClick={handleExportCSV}>
+                          <FileSpreadsheet className="h-4 w-4 mr-2" />
+                          Export as CSV
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleExportPDF}>
+                          <FileText className="h-4 w-4 mr-2" />
+                          Export as PDF Report
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                   <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
