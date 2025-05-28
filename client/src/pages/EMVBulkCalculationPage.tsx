@@ -98,7 +98,7 @@ function validateRow(row: string[], headers: string[]): [boolean, any] {
   const requiredFields = {
     "Platform": ["instagram", "tiktok", "youtube", "pinterest"],
     "Post Type": null, // Will be validated against platform
-    "Creator Size": ["nano", "micro", "mid_tier", "macro", "mega"],
+    "Creator Size": ["brand_fan", "nano", "micro", "mid_tier", "macro", "celebrity"],
     "Content Topic": ["beauty", "fashion", "fitness", "finance", "food", "game", "music", "travel", "technology", "other"]
   };
 
