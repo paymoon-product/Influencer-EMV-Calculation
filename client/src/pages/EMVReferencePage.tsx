@@ -28,7 +28,15 @@ export default function EMVReferencePage() {
 
               <h3 className="text-xl font-semibold mb-3">How EMV is Calculated</h3>
               <p className="text-gray-700 mb-4">
-                Our EMV calculation uses a sophisticated formula that considers multiple factors:
+                Our EMV model uses the following formula:
+              </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div className="font-mono text-lg text-center text-blue-900 font-semibold">
+                  EMV = Σ(Engagement_Type × Base_Value × Creator_Factor × Post_Type_Factor × Topic_Factor)
+                </div>
+              </div>
+              <p className="text-gray-700 mb-4">
+                This sophisticated formula considers multiple factors:
               </p>
               <ul className="list-disc pl-6 space-y-2 text-gray-700 mb-6">
                 <li><strong>Base Engagement Values:</strong> Different engagement types have different monetary values</li>
