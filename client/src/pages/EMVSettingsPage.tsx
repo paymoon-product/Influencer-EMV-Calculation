@@ -280,8 +280,40 @@ export default function EMVSettingsPage() {
     }
   };
 
-  const removeCustomTopic = (index: number) => {
-    setCustomTopics(customTopics.filter((_, i) => i !== index));
+  const removeCustomTopic = async (index: number) => {
+    const topicToDelete = customTopics[index];
+    
+    try {
+      // Delete from database
+      const response = await fetch(`/api/custom-topics/${topicToDelete.id}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        // Remove from local state
+        const updatedTopics = customTopics.filter((_, i) => i !== index);
+        setCustomTopics(updatedTopics);
+        
+        // Update localStorage immediately so dropdown reflects the change
+        const currentSettings = JSON.parse(localStorage.getItem('emv-settings') || '{}');
+        currentSettings.customTopics = updatedTopics;
+        localStorage.setItem('emv-settings', JSON.stringify(currentSettings));
+        
+        toast({
+          title: "Topic Deleted",
+          description: `Custom topic "${topicToDelete.name}" has been removed.`,
+        });
+      } else {
+        throw new Error('Failed to delete topic');
+      }
+    } catch (error) {
+      console.error('Error deleting custom topic:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete custom topic. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const updateCustomTopic = (index: number, field: string, value: string | number) => {
