@@ -7,10 +7,9 @@ export function TopNavigation() {
   const navItems = [
     { href: "/", label: "Home", icon: Home },
     { href: "/insights", label: "AI Insights", icon: Sparkles },
-    { href: "/benchmarks", label: "Benchmarks", icon: Target },
+    { href: "/benchmarks", label: "Performance Comparison", icon: Target },
     { href: "/settings", label: "Settings", icon: Settings },
     { href: "/reference", label: "Reference", icon: BookOpen },
-    { href: "/history", label: "History", icon: Clock },
   ];
 
   return (
