@@ -608,6 +608,18 @@ export default function EMVBulkCalculationPage() {
                 </div>
               </div>
 
+              {/* View History Button - Always Visible */}
+              <div className="flex justify-end mb-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => window.open('/performance-comparison', '_blank')}
+                  className="flex items-center"
+                >
+                  <Clock className="h-4 w-4 mr-1" />
+                  View Calculation History
+                </Button>
+              </div>
+
               {/* Actions Bar */}
               {calculationRows.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-6">
@@ -634,14 +646,7 @@ export default function EMVBulkCalculationPage() {
                     <FileDown className="h-4 w-4 mr-1" />
                     Export Results
                   </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => window.open('/performance-comparison', '_blank')}
-                    className="flex items-center"
-                  >
-                    <Clock className="h-4 w-4 mr-1" />
-                    View Calculation History
-                  </Button>
+
                   <Button 
                     variant="ghost" 
                     onClick={clearCalculations}
