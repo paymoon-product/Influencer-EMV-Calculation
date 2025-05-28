@@ -3,6 +3,7 @@ import { registerRoutes } from './routes';
 import { setupVite, serveStatic, log } from './vite';
 import session from 'express-session';
 import connectPgSimple from 'connect-pg-simple';
+import { randomBytes } from 'crypto';
 
 const app = express();
 app.use(express.json());
@@ -97,7 +98,7 @@ app.use(
       maxAge: 1000 * 60 * 60 * 24, // 24 hours
     },
     genid: () => {
-      return require('crypto').randomBytes(16).toString('hex');
+      return randomBytes(16).toString('hex');
     },
   })
 );
