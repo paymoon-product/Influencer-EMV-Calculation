@@ -294,7 +294,7 @@ export default function EMVBulkCalculationPage() {
                 error: "Calculation error. Check input values."
               };
             }
-          }));
+          });
           
           setCalculationRows(calculatedRows);
           
