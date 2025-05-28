@@ -94,13 +94,10 @@ function downloadCSVTemplate() {
 }
 
 function validateRow(row: string[], headers: string[]): [boolean, any] {
-  // Required fields with validation rules
-  const requiredFields = {
-    "Platform": ["instagram", "tiktok", "youtube", "pinterest"],
-    "Post Type": null, // Will be validated against platform
-    "Creator Size": ["brand_fan", "nano", "micro", "mid_tier", "macro", "celebrity"],
-    "Content Topic": ["beauty", "fashion", "fitness", "finance", "food", "game", "music", "travel", "technology", "other"]
-  };
+  // Only Platform, Post Type, and Views/Impressions are required
+  const validPlatforms = ["instagram", "tiktok", "youtube", "pinterest"];
+  const validCreatorSizes = ["brand_fan", "nano", "micro", "mid_tier", "macro", "celebrity"];
+  const validContentTopics = ["beauty", "fashion", "fitness", "finance", "food", "game", "music", "travel", "technology", "other"];
 
   const validPostTypes = {
     "instagram": ["post", "reel", "story"],
@@ -118,14 +115,30 @@ function validateRow(row: string[], headers: string[]): [boolean, any] {
     rowData[header] = row[index];
   });
 
-  // Validate required fields
-  for (const [field, validValues] of Object.entries(requiredFields)) {
-    if (!rowData[field] || rowData[field].trim() === "") {
-      return [false, `${field} is required`];
-    }
+  // Validate required fields: Platform and Post Type only
+  if (!rowData["Platform"] || rowData["Platform"].trim() === "") {
+    return [false, "Platform is required"];
+  }
 
-    if (validValues && !validValues.includes(rowData[field].toLowerCase())) {
-      return [false, `${field} must be one of: ${validValues.join(', ')}`];
+  if (!validPlatforms.includes(rowData["Platform"].toLowerCase())) {
+    return [false, `Platform must be one of: ${validPlatforms.join(', ')}`];
+  }
+
+  if (!rowData["Post Type"] || rowData["Post Type"].trim() === "") {
+    return [false, "Post Type is required"];
+  }
+
+  // Validate Creator Size if provided (optional but must be valid)
+  if (rowData["Creator Size"] && rowData["Creator Size"].trim() !== "") {
+    if (!validCreatorSizes.includes(rowData["Creator Size"].toLowerCase())) {
+      return [false, `Creator Size "${rowData["Creator Size"]}" is invalid. Valid sizes: ${validCreatorSizes.join(', ')}`];
+    }
+  }
+
+  // Validate Content Topic if provided (optional but must be valid)
+  if (rowData["Content Topic"] && rowData["Content Topic"].trim() !== "") {
+    if (!validContentTopics.includes(rowData["Content Topic"].toLowerCase())) {
+      return [false, `Content Topic "${rowData["Content Topic"]}" is invalid. Valid topics: ${validContentTopics.join(', ')}`];
     }
   }
 
@@ -137,15 +150,12 @@ function validateRow(row: string[], headers: string[]): [boolean, any] {
     return [false, `Invalid Post Type for ${platform}. Must be one of: ${validPostTypes[platform]?.join(', ')}`];
   }
 
-  // Check if at least one engagement metric has a value
-  const metricFields = ["Impressions", "Views", "Likes", "Comments", "Shares", "Saves", "Clicks", "Closeups"];
-  const hasMetrics = metricFields.some(field => {
-    const value = rowData[field];
-    return value && value.trim() !== "" && !isNaN(Number(value));
-  });
+  // Require at least Views or Impressions
+  const hasViews = rowData["Views"] && rowData["Views"].trim() !== "" && !isNaN(parseFloat(rowData["Views"]));
+  const hasImpressions = rowData["Impressions"] && rowData["Impressions"].trim() !== "" && !isNaN(parseFloat(rowData["Impressions"]));
 
-  if (!hasMetrics) {
-    return [false, "At least one engagement metric is required"];
+  if (!hasViews && !hasImpressions) {
+    return [false, "Either Views or Impressions must be provided"];
   }
 
   return [true, null];
@@ -548,8 +558,19 @@ export default function EMVBulkCalculationPage() {
                 <div>
                   <h2 className="text-lg font-semibold text-primary-900 mb-2">Bulk EMV Calculation</h2>
                   <p className="text-gray-600 mb-4 md:mb-0">
-                    Upload a CSV file with multiple creators to calculate EMV in bulk.
+                    Upload a CSV file with multiple creators to calculate EMV in bulk. Only Platform, Post Type, and Views/Impressions are required.
                   </p>
+                  <div className="bg-blue-50 p-4 rounded-lg mt-4 space-y-2">
+                    <h4 className="text-sm font-medium text-blue-900">Supported Values:</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-blue-800">
+                      <div>
+                        <strong>Creator Sizes:</strong> brand_fan, nano, micro, mid_tier, macro, celebrity
+                      </div>
+                      <div>
+                        <strong>Content Topics:</strong> beauty, fashion, fitness, finance, food, game, music, travel, technology, other
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button 
