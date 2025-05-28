@@ -18,6 +18,7 @@ The Aspire EMV Calculator is an internal admin tool for an influencer marketing 
 ## Creator Size Categories
 
 The application uses the following influencer size categories:
+
 - Brand Fan (<2.5k followers)
 - Nano (2.5k-25k followers)
 - Micro (25k-60k followers)
@@ -27,6 +28,7 @@ The application uses the following influencer size categories:
 ## Content Topics
 
 The default content topics with their associated factors include:
+
 - Beauty (1.3)
 - Fashion (1.2)
 - Fitness (1.1)
@@ -52,37 +54,49 @@ The default content topics with their associated factors include:
 
 - Node.js (v16 or higher)
 - PostgreSQL database
+- Docker (with Docker Compose)
 
 ### Installation
 
 1. Clone the repository:
+
    ```
    git clone https://github.com/your-organization/aspire-emv-calculator.git
    cd aspire-emv-calculator
    ```
 
 2. Install dependencies:
+
    ```
    npm install
    ```
 
 3. Set up environment variables:
    Create a `.env` file in the root directory with the following variables:
+
    ```
    DATABASE_URL=postgresql://username:password@localhost:5432/emv_calculator
    ```
 
-4. Set up the database:
+4. Start the local database using Docker:
+
+   ```
+   npm run db:start
+   ```
+
+5. Set up the database:
+
    ```
    npm run db:push
    ```
 
-5. Start the development server:
+6. Start the development server:
+
    ```
    npm run dev
    ```
 
-6. Access the application at `http://localhost:5000`
+7. Access the application at `http://localhost:5000`
 
 ## Deployment
 
