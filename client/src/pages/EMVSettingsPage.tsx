@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Save, RotateCcw, Plus, Users, User } from "lucide-react";
+import { Save, RotateCcw, Plus, Users, User, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -421,22 +421,28 @@ export default function EMVSettingsPage() {
                             value={topic.name}
                             onChange={(e) => updateCustomTopic(index, 'name', e.target.value)}
                             placeholder="Topic name"
-                            className="flex-1"
+                            className="w-20"
                           />
                           <Input
                             type="number"
                             step="0.1"
+                            min="0.1"
                             value={topic.factor}
-                            onChange={(e) => updateCustomTopic(index, 'factor', parseFloat(e.target.value) || 1.0)}
-                            className="w-24"
+                            onChange={(e) => {
+                              const value = parseFloat(e.target.value);
+                              if (value > 0) {
+                                updateCustomTopic(index, 'factor', value);
+                              }
+                            }}
+                            className="w-20"
                           />
                           <Button
                             onClick={() => removeCustomTopic(index)}
                             variant="outline"
                             size="sm"
-                            className="text-red-600 hover:text-red-700"
+                            className="text-red-600 hover:text-red-700 p-2"
                           >
-                            Remove
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
                       ))}
