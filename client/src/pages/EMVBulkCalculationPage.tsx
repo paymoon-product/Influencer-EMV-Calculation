@@ -635,6 +635,14 @@ export default function EMVBulkCalculationPage() {
                     Export Results
                   </Button>
                   <Button 
+                    variant="outline" 
+                    onClick={() => window.open('/performance-comparison', '_blank')}
+                    className="flex items-center"
+                  >
+                    <Clock className="h-4 w-4 mr-1" />
+                    View Calculation History
+                  </Button>
+                  <Button 
                     variant="ghost" 
                     onClick={clearCalculations}
                     className="flex items-center text-destructive"

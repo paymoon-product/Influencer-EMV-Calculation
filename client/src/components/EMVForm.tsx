@@ -14,8 +14,8 @@ const createFormSchema = (platform: string, postType: string) => {
   const baseSchema = z.object({
     platform: z.string().min(1, "Platform is required"),
     postType: z.string().min(1, "Post type is required"),
-    creatorSize: z.string().min(1, "Creator size is required"),
-    contentTopic: z.string().min(1, "Content topic is required"),
+    creatorSize: z.string().optional(),
+    contentTopic: z.string().optional(),
   });
 
   if (!platform || !postType) {

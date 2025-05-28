@@ -9,7 +9,7 @@ function getCustomizedFactors() {
     const settings = JSON.parse(savedSettings);
     
     // Combine default topic factors with custom topics if available
-    const customTopicsFactors = {};
+    const customTopicsFactors: {[key: string]: number} = {};
     if (settings.customTopics) {
       settings.customTopics.forEach((topic: {name: string, factor: number}) => {
         customTopicsFactors[topic.name.toLowerCase()] = topic.factor;
@@ -45,41 +45,46 @@ export function calculateEMV(values: FormValues): EMVResult {
   // Get customized factors or defaults
   const customFactors = getCustomizedFactors();
 
-  // Get adjustment factors
-  const creatorFactor = customFactors.creatorFactors[creatorSize as keyof typeof customFactors.creatorFactors];
+  // Get adjustment factors (default to 1.0 if not provided or empty)
+  const creatorFactor = (creatorSize && creatorSize.trim() !== '') 
+    ? customFactors.creatorFactors[creatorSize as keyof typeof customFactors.creatorFactors] || 1.0
+    : 1.0;
   const postTypeFactor = customFactors.postTypeFactors[`${platform}_${postType}` as keyof typeof customFactors.postTypeFactors];
-  const topicFactor = customFactors.topicFactors[contentTopic as keyof typeof customFactors.topicFactors];
+  const topicFactor = (contentTopic && contentTopic.trim() !== '') 
+    ? customFactors.topicFactors[contentTopic as keyof typeof customFactors.topicFactors] || 1.0
+    : 1.0;
 
   let totalEMV = 0;
   const breakdown: EMVBreakdownItem[] = [];
 
   // Get engagement fields for selected platform and post type
-  const fields = emvData.engagementFields[platform as keyof typeof emvData.engagementFields][
-    postType as keyof (typeof emvData.engagementFields)[keyof typeof emvData.engagementFields]
-  ];
+  const platformFields = emvData.engagementFields[platform as keyof typeof emvData.engagementFields];
+  const fields = platformFields ? platformFields[postType as keyof typeof platformFields] : [];
 
   // Calculate EMV for each engagement type
-  fields.forEach((field) => {
-    const count = Number(values[field]) || 0;
-    if (count > 0) {
-      // Use customized base values if available, otherwise use default ones
-      const baseValue = customFactors.baseValues[platform as keyof typeof emvData.baseValues]?.[
-        postType as keyof (typeof emvData.baseValues)[keyof typeof emvData.baseValues]
-      ]?.[field as keyof any] || emvData.baseValues[platform as keyof typeof emvData.baseValues][
-        postType as keyof (typeof emvData.baseValues)[keyof typeof emvData.baseValues]
-      ][field as keyof any];
+  if (fields && Array.isArray(fields)) {
+    fields.forEach((field: string) => {
+      const count = Number(values[field]) || 0;
+      if (count > 0) {
+        // Use customized base values if available, otherwise use default ones
+        const baseValue = customFactors.baseValues[platform as keyof typeof emvData.baseValues]?.[
+          postType as keyof (typeof emvData.baseValues)[keyof typeof emvData.baseValues]
+        ]?.[field as keyof any] || emvData.baseValues[platform as keyof typeof emvData.baseValues][
+          postType as keyof (typeof emvData.baseValues)[keyof typeof emvData.baseValues]
+        ][field as keyof any];
 
-      const engagementEMV = count * baseValue * creatorFactor * postTypeFactor * topicFactor;
-      totalEMV += engagementEMV;
+        const engagementEMV = count * baseValue * creatorFactor * postTypeFactor * topicFactor;
+        totalEMV += engagementEMV;
 
-      breakdown.push({
-        type: field,
-        count,
-        baseValue,
-        emv: engagementEMV
-      });
-    }
-  });
+        breakdown.push({
+          type: field,
+          count,
+          baseValue,
+          emv: engagementEMV
+        });
+      }
+    });
+  }
 
   return {
     platform,
