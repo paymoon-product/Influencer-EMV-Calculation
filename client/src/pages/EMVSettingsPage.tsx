@@ -104,6 +104,8 @@ export default function EMVSettingsPage() {
   });
 
   const [customTopics, setCustomTopics] = useState<Array<{name: string, factor: number}>>([]);
+  const [newTopicName, setNewTopicName] = useState('');
+  const [newTopicFactor, setNewTopicFactor] = useState(1.0);
   const { toast } = useToast();
 
   // Load saved settings
@@ -173,7 +175,49 @@ export default function EMVSettingsPage() {
   };
 
   const addCustomTopic = () => {
-    setCustomTopics([...customTopics, { name: "", factor: 1.0 }]);
+    if (!newTopicName.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Topic name cannot be empty.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (newTopicFactor <= 0) {
+      toast({
+        title: "Validation Error", 
+        description: "Topic factor must be greater than 0.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if topic already exists
+    const existingTopic = Object.keys(contentTopicFactors).find(
+      topic => topic.toLowerCase() === newTopicName.toLowerCase()
+    );
+    const existingCustomTopic = customTopics.find(
+      topic => topic.name.toLowerCase() === newTopicName.toLowerCase()
+    );
+
+    if (existingTopic || existingCustomTopic) {
+      toast({
+        title: "Validation Error",
+        description: "A topic with this name already exists.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setCustomTopics([...customTopics, { name: newTopicName.trim(), factor: newTopicFactor }]);
+    setNewTopicName('');
+    setNewTopicFactor(1.0);
+    
+    toast({
+      title: "Topic Added",
+      description: `Custom topic "${newTopicName}" has been added successfully.`,
+    });
   };
 
   const removeCustomTopic = (index: number) => {
@@ -382,16 +426,10 @@ export default function EMVSettingsPage() {
                     <p className="text-gray-600">These factors adjust EMV based on the content's subject matter.</p>
                     <p className="text-sm text-gray-500 mt-1">Weight Factor</p>
                   </div>
-                  <div className="flex space-x-2">
-                    <Button onClick={addCustomTopic} variant="outline" size="sm">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Topic
-                    </Button>
-                    <Button onClick={resetToDefaults} variant="outline" size="sm">
-                      <RotateCcw className="h-4 w-4 mr-2" />
-                      Reset to Default
-                    </Button>
-                  </div>
+                  <Button onClick={resetToDefaults} variant="outline" size="sm">
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Reset to Default
+                  </Button>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
@@ -409,6 +447,43 @@ export default function EMVSettingsPage() {
                       />
                     </div>
                   ))}
+                </div>
+
+                {/* Add New Topic Form */}
+                <div className="border-t pt-4 mt-6">
+                  <h4 className="font-medium mb-4">Add Custom Topic</h4>
+                  <div className="flex items-center space-x-4 max-w-md">
+                    <Input
+                      value={newTopicName}
+                      onChange={(e) => setNewTopicName(e.target.value)}
+                      placeholder="Enter topic name (e.g., Sports, Education)"
+                      className="flex-1"
+                    />
+                    <Input
+                      type="number"
+                      step="0.1"
+                      min="0.1"
+                      value={newTopicFactor}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value);
+                        if (value > 0) {
+                          setNewTopicFactor(value);
+                        }
+                      }}
+                      className="w-20"
+                      placeholder="1.0"
+                    />
+                    <Button 
+                      onClick={addCustomTopic}
+                      disabled={!newTopicName.trim() || newTopicFactor <= 0}
+                      size="sm"
+                    >
+                      Add
+                    </Button>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Enter a topic name and factor value, then click "Add" to include it in your calculations.
+                  </p>
                 </div>
 
                 {customTopics.length > 0 && (
