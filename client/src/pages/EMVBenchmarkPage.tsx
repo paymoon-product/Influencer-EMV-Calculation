@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingUp, TrendingDown, Target, Award, BarChart3, Users, Zap, Info, Eye, Download, FileText, HelpCircle } from "lucide-react";
+import { TrendingUp, TrendingDown, Target, Award, BarChart3, Users, Zap, Info, Eye, Download, FileText, AlertCircle } from "lucide-react";
 import { MainLayout } from "@/components/MainLayout";
 import { apiRequest } from "@/lib/queryClient";
 import { exportCalculationsToCSV, exportCalculationsToPDF } from "@/lib/export-utils";
@@ -235,7 +235,7 @@ export default function EMVBenchmarkPage() {
                         <FileText className="h-4 w-4 mr-1" />
                         Export PDF
                       </Button>
-                      <p className="text-sm text-gray-600">Click "Compare" to see how your performance ranks against industry benchmarks</p>
+
                     </div>
                   </div>
                   
@@ -256,7 +256,7 @@ export default function EMVBenchmarkPage() {
                                 <TooltipProvider>
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <HelpCircle className="h-4 w-4 text-gray-400" />
+                                      <AlertCircle className="h-4 w-4 text-gray-400" />
                                     </TooltipTrigger>
                                     <TooltipContent>
                                       <p>Click "Compare" to see how your performance ranks against industry benchmarks</p>
