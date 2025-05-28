@@ -269,7 +269,7 @@ export default function EMVSettingsPage() {
                     <div className="flex items-center space-x-2">
                       <User className="h-4 w-4 text-gray-500" />
                       <span className="font-medium">Brand Fan</span>
-                      <span className="text-sm text-gray-500">- &lt;1k followers</span>
+                      <span className="text-sm text-gray-500">- up to 2.5K followers</span>
                     </div>
                     <Input
                       type="number"
@@ -283,8 +283,8 @@ export default function EMVSettingsPage() {
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <User className="h-4 w-4 text-blue-500" />
-                      <span className="font-medium">Nano</span>
-                      <span className="text-sm text-gray-500">- 1K-10K followers</span>
+                      <span className="font-medium">Nano Creator</span>
+                      <span className="text-sm text-gray-500">- 2.5K-25K followers</span>
                     </div>
                     <Input
                       type="number"
@@ -298,8 +298,8 @@ export default function EMVSettingsPage() {
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <Users className="h-4 w-4 text-green-500" />
-                      <span className="font-medium">Micro</span>
-                      <span className="text-sm text-gray-500">- 10K-50K followers</span>
+                      <span className="font-medium">Micro Creator</span>
+                      <span className="text-sm text-gray-500">- 25K-60K followers</span>
                     </div>
                     <Input
                       type="number"
@@ -313,8 +313,8 @@ export default function EMVSettingsPage() {
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <Users className="h-4 w-4 text-yellow-500" />
-                      <span className="font-medium">Mid Tier</span>
-                      <span className="text-sm text-gray-500">- 50K-500K followers</span>
+                      <span className="font-medium">Mid-Tier Creator</span>
+                      <span className="text-sm text-gray-500">- 60K-100K followers</span>
                     </div>
                     <Input
                       type="number"
@@ -328,8 +328,8 @@ export default function EMVSettingsPage() {
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <Users className="h-4 w-4 text-orange-500" />
-                      <span className="font-medium">Macro</span>
-                      <span className="text-sm text-gray-500">- 500K-1M followers</span>
+                      <span className="font-medium">Macro Creator</span>
+                      <span className="text-sm text-gray-500">- 100K-1M followers</span>
                     </div>
                     <Input
                       type="number"
@@ -343,7 +343,7 @@ export default function EMVSettingsPage() {
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <Users className="h-4 w-4 text-red-500" />
-                      <span className="font-medium">Celebrity</span>
+                      <span className="font-medium">Celebrity Creator</span>
                       <span className="text-sm text-gray-500">- 1M+ followers</span>
                     </div>
                     <Input
