@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { MainLayout } from "@/components/MainLayout";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function EMVSettingsPage() {
   // Creator Size Factors
@@ -108,6 +109,22 @@ export default function EMVSettingsPage() {
   const [newTopicFactor, setNewTopicFactor] = useState(1.0);
   const { toast } = useToast();
 
+  // Load custom topics from database
+  const loadCustomTopics = async () => {
+    try {
+      const response = await fetch('/api/custom-topics');
+      const data = await response.json();
+      const topics = data.map((topic: any) => ({
+        id: topic.id,
+        name: topic.name,
+        factor: parseFloat(topic.factor)
+      }));
+      setCustomTopics(topics);
+    } catch (error) {
+      console.error('Error loading custom topics:', error);
+    }
+  };
+
   // Load saved settings
   useEffect(() => {
     const savedSettings = localStorage.getItem('emv-settings');
@@ -117,8 +134,10 @@ export default function EMVSettingsPage() {
       if (settings.postTypeFactors) setPostTypeFactors(settings.postTypeFactors);
       if (settings.contentTopicFactors) setContentTopicFactors(settings.contentTopicFactors);
       if (settings.baseValues) setBaseValues(settings.baseValues);
-      if (settings.customTopics) setCustomTopics(settings.customTopics);
     }
+    
+    // Load custom topics from database
+    loadCustomTopics();
   }, []);
 
   const saveAllChanges = () => {
@@ -174,7 +193,7 @@ export default function EMVSettingsPage() {
     });
   };
 
-  const addCustomTopic = () => {
+  const addCustomTopic = async () => {
     if (!newTopicName.trim()) {
       toast({
         title: "Validation Error",
@@ -210,14 +229,40 @@ export default function EMVSettingsPage() {
       return;
     }
 
-    setCustomTopics([...customTopics, { name: newTopicName.trim(), factor: newTopicFactor }]);
-    setNewTopicName('');
-    setNewTopicFactor(1.0);
-    
-    toast({
-      title: "Topic Added",
-      description: `Custom topic "${newTopicName}" has been added successfully.`,
-    });
+    try {
+      const response = await fetch('/api/custom-topics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newTopicName.trim(),
+          factor: newTopicFactor
+        })
+      });
+      
+      const data = await response.json();
+      
+      const newTopic = {
+        id: data.id,
+        name: data.name,
+        factor: parseFloat(data.factor)
+      };
+      
+      setCustomTopics([...customTopics, newTopic]);
+      setNewTopicName('');
+      setNewTopicFactor(1.0);
+      
+      toast({
+        title: "Topic Added",
+        description: `Custom topic "${newTopic.name}" has been saved to database.`,
+      });
+    } catch (error) {
+      console.error('Error adding custom topic:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save custom topic. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const removeCustomTopic = (index: number) => {

@@ -40,6 +40,7 @@ export function EMVForm({ onSubmit }: EMVFormProps) {
   const [selectedPlatform, setSelectedPlatform] = useState("");
   const [selectedPostType, setSelectedPostType] = useState("");
   const [formSchema, setFormSchema] = useState(createFormSchema("", ""));
+  const [customTopics, setCustomTopics] = useState<{id?: number, name: string, factor: number}[]>([]);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -50,6 +51,26 @@ export function EMVForm({ onSubmit }: EMVFormProps) {
       contentTopic: "",
     },
   });
+
+  // Load custom topics from database
+  useEffect(() => {
+    const loadCustomTopics = async () => {
+      try {
+        const response = await fetch('/api/custom-topics');
+        const data = await response.json();
+        const topics = data.map((topic: any) => ({
+          id: topic.id,
+          name: topic.name,
+          factor: parseFloat(topic.factor)
+        }));
+        setCustomTopics(topics);
+      } catch (error) {
+        console.error('Error loading custom topics:', error);
+      }
+    };
+    
+    loadCustomTopics();
+  }, []);
 
   // Update the form schema when platform or post type changes
   useEffect(() => {
@@ -204,6 +225,11 @@ export function EMVForm({ onSubmit }: EMVFormProps) {
                       <SelectItem value="travel">Travel</SelectItem>
                       <SelectItem value="technology">Technology</SelectItem>
                       <SelectItem value="other">Other</SelectItem>
+                      {customTopics.map((topic) => (
+                        <SelectItem key={topic.id || topic.name} value={topic.name.toLowerCase()}>
+                          {topic.name} (Custom)
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </FormItem>

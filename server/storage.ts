@@ -4,11 +4,14 @@ import {
   EmvCalculation, 
   EmvParameters,
   EmvResult,
+  CustomTopic,
+  InsertCustomTopic,
   users,
-  emvCalculations
+  emvCalculations,
+  customTopics
 } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 // Extend the storage interface with methods for EMV calculations
 export interface IStorage {
@@ -18,6 +21,9 @@ export interface IStorage {
   saveEmvCalculation(userId: string, parameters: EmvParameters, result: EmvResult): Promise<EmvCalculation>;
   getEmvCalculationsByUser(userId: string): Promise<EmvCalculation[]>;
   getEmvCalculation(id: number): Promise<EmvCalculation | undefined>;
+  saveCustomTopic(userId: string, name: string, factor: string): Promise<CustomTopic>;
+  getCustomTopicsByUser(userId: string): Promise<CustomTopic[]>;
+  deleteCustomTopic(userId: string, topicId: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -65,6 +71,24 @@ export class DatabaseStorage implements IStorage {
       .from(emvCalculations)
       .where(eq(emvCalculations.id, id));
     return calculation || undefined;
+  }
+
+  async saveCustomTopic(userId: string, name: string, factor: string): Promise<CustomTopic> {
+    const [topic] = await db
+      .insert(customTopics)
+      .values({ userId, name, factor })
+      .returning();
+    return topic;
+  }
+
+  async getCustomTopicsByUser(userId: string): Promise<CustomTopic[]> {
+    return await db.select().from(customTopics).where(eq(customTopics.userId, userId));
+  }
+
+  async deleteCustomTopic(userId: string, topicId: number): Promise<void> {
+    await db.delete(customTopics).where(
+      and(eq(customTopics.userId, userId), eq(customTopics.id, topicId))
+    );
   }
 }
 

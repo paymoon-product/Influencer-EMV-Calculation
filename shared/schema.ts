@@ -26,12 +26,29 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
 });
 
+// Custom topics schema
+export const customTopics = pgTable("custom_topics", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  name: text("name").notNull(),
+  factor: text("factor").notNull(), // Store as text to preserve decimal precision
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+
+export const insertCustomTopicSchema = createInsertSchema(customTopics).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertCustomTopic = z.infer<typeof insertCustomTopicSchema>;
+export type CustomTopic = typeof customTopics.$inferSelect;
 
 // EMV calculation parameters schema
 export const emvParametersSchema = z.object({

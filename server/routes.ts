@@ -160,6 +160,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Custom topics endpoints
+  app.post("/api/custom-topics", async (req: Request, res: Response) => {
+    try {
+      const { name, factor } = req.body;
+      const userId = "demo-user"; // Using demo user for now
+      
+      if (!name || !factor) {
+        return res.status(400).json({ error: "Name and factor are required" });
+      }
+
+      const topic = await storage.saveCustomTopic(userId, name, factor.toString());
+      res.json(topic);
+    } catch (error) {
+      console.error("Error saving custom topic:", error);
+      res.status(500).json({ error: "Failed to save custom topic" });
+    }
+  });
+
+  app.get("/api/custom-topics", async (req: Request, res: Response) => {
+    try {
+      const userId = "demo-user"; // Using demo user for now
+      const topics = await storage.getCustomTopicsByUser(userId);
+      res.json(topics);
+    } catch (error) {
+      console.error("Error fetching custom topics:", error);
+      res.status(500).json({ error: "Failed to fetch custom topics" });
+    }
+  });
+
+  app.delete("/api/custom-topics/:id", async (req: Request, res: Response) => {
+    try {
+      const topicId = parseInt(req.params.id);
+      const userId = "demo-user"; // Using demo user for now
+      
+      await storage.deleteCustomTopic(userId, topicId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting custom topic:", error);
+      res.status(500).json({ error: "Failed to delete custom topic" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;
