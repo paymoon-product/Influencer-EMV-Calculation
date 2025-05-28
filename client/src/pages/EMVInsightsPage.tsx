@@ -69,13 +69,15 @@ export default function EMVInsightsPage() {
   ];
 
   // Load calculation history
-  const { data: calculationHistory } = useQuery({
-    queryKey: ['/api/emv/history'],
-    enabled: false // Only load when needed
+  const { data: calculationHistory, refetch } = useQuery({
+    queryKey: ['/api/emv/history']
   });
 
   const handleGenerateInsights = async () => {
-    if (!calculationHistory?.calculations?.length) {
+    // Refetch the latest calculations before checking
+    const { data: latestHistory } = await refetch();
+    
+    if (!latestHistory?.calculations?.length) {
       toast({
         title: "No Data Available",
         description: "You need some EMV calculations before generating insights. Try calculating some EMV values first!",
@@ -90,7 +92,7 @@ export default function EMVInsightsPage() {
       const response = await fetch('/api/emv/insights', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ calculations: calculationHistory.calculations })
+        body: JSON.stringify({ calculations: latestHistory.calculations })
       });
       
       if (response.ok) {
