@@ -120,6 +120,11 @@ export default function EMVSettingsPage() {
         factor: parseFloat(topic.factor)
       }));
       setCustomTopics(topics);
+      
+      // Immediately update localStorage so calculator can use custom topics
+      const currentSettings = JSON.parse(localStorage.getItem('emv-settings') || '{}');
+      currentSettings.customTopics = topics;
+      localStorage.setItem('emv-settings', JSON.stringify(currentSettings));
     } catch (error) {
       console.error('Error loading custom topics:', error);
     }
@@ -137,7 +142,12 @@ export default function EMVSettingsPage() {
     }
     
     // Load custom topics from database
-    loadCustomTopics();
+    loadCustomTopics().then(() => {
+      // Update localStorage with latest custom topics for EMV calculator
+      const currentSettings = JSON.parse(localStorage.getItem('emv-settings') || '{}');
+      currentSettings.customTopics = customTopics;
+      localStorage.setItem('emv-settings', JSON.stringify(currentSettings));
+    });
   }, []);
 
   const saveAllChanges = () => {
@@ -250,6 +260,11 @@ export default function EMVSettingsPage() {
       setCustomTopics([...customTopics, newTopic]);
       setNewTopicName('');
       setNewTopicFactor(1.0);
+      
+      // Also save to localStorage for EMV calculator
+      const settings = JSON.parse(localStorage.getItem('emv-settings') || '{}');
+      settings.customTopics = [...customTopics, newTopic];
+      localStorage.setItem('emv-settings', JSON.stringify(settings));
       
       toast({
         title: "Topic Added",

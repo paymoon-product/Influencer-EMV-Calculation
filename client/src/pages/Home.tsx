@@ -127,7 +127,7 @@ export default function Home() {
     setIsProcessing(true);
 
     // Process calculations
-    const updatedRows = rows.map(row => {
+    const updatedRows = await Promise.all(rows.map(async row => {
       try {
         const formValues: FormValues = {
           platform: row.platform,
@@ -142,7 +142,7 @@ export default function Home() {
       } catch (error) {
         return { ...row, result: null, error: error instanceof Error ? error.message : 'Calculation failed' };
       }
-    });
+    }));
 
     setBulkData(updatedRows);
     setIsProcessing(false);

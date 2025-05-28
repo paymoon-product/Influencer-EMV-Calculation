@@ -1,20 +1,23 @@
 import { emvData, FormValues, EMVResult, EMVBreakdownItem } from "./emv-data";
 
 // Get user-customized factors or use defaults from emvData
-function getCustomizedFactors() {
+function getCustomizedFactorsSync() {
   // Try to get settings from localStorage
   const savedSettings = localStorage.getItem('emv-settings');
   
+  // Load custom topics from localStorage (they should be cached there from the Settings page)
+  let customTopicsFactors: {[key: string]: number} = {};
   if (savedSettings) {
     const settings = JSON.parse(savedSettings);
-    
-    // Combine default topic factors with custom topics if available
-    const customTopicsFactors: {[key: string]: number} = {};
     if (settings.customTopics) {
       settings.customTopics.forEach((topic: {name: string, factor: number}) => {
         customTopicsFactors[topic.name.toLowerCase()] = topic.factor;
       });
     }
+  }
+  
+  if (savedSettings) {
+    const settings = JSON.parse(savedSettings);
     
     const topicFactorsCombined = {
       ...emvData.topicFactors,
@@ -30,11 +33,11 @@ function getCustomizedFactors() {
     };
   }
   
-  // Return defaults if no settings found
+  // Return defaults with custom topics if no settings found
   return {
     creatorFactors: emvData.creatorFactors,
     postTypeFactors: emvData.postTypeFactors,
-    topicFactors: emvData.topicFactors,
+    topicFactors: { ...emvData.topicFactors, ...customTopicsFactors },
     baseValues: emvData.baseValues
   };
 }
@@ -42,8 +45,8 @@ function getCustomizedFactors() {
 export function calculateEMV(values: FormValues): EMVResult {
   const { platform, postType, creatorSize, contentTopic } = values;
   
-  // Get customized factors or defaults
-  const customFactors = getCustomizedFactors();
+  // Get customized factors or defaults including custom topics
+  const customFactors = getCustomizedFactorsSync();
 
   // Get adjustment factors (default to 1.0 if not provided or empty)
   const creatorFactor = (creatorSize && creatorSize.trim() !== '') 
