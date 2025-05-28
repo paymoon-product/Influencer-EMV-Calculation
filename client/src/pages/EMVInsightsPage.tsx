@@ -3,9 +3,37 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Brain, TrendingUp, Target, Lightbulb, BarChart3, Users, Zap, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+
+interface TrendInsight {
+  id: string;
+  type: 'trend' | 'recommendation' | 'optimization' | 'warning';
+  title: string;
+  description: string;
+  impact: 'high' | 'medium' | 'low';
+  category: 'platform' | 'content' | 'timing' | 'audience' | 'general';
+  actionable: boolean;
+  confidence: number;
+}
+
+interface InsightsReport {
+  summary: string;
+  insights: TrendInsight[];
+  keyMetrics: {
+    totalEmv: number;
+    averageEmv: number;
+    topPerformingPlatform: string;
+    topPerformingContent: string;
+    growthRate: number;
+  };
+  recommendations: string[];
+}
 
 export default function EMVInsightsPage() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [insights, setInsights] = useState<InsightsReport | null>(null);
+  const { toast } = useToast();
 
   const aiFeatures = [
     {
@@ -40,12 +68,50 @@ export default function EMVInsightsPage() {
     }
   ];
 
-  const handleGenerateInsights = () => {
+  // Load calculation history
+  const { data: calculationHistory } = useQuery({
+    queryKey: ['/api/emv/history'],
+    enabled: false // Only load when needed
+  });
+
+  const handleGenerateInsights = async () => {
+    if (!calculationHistory?.calculations?.length) {
+      toast({
+        title: "No Data Available",
+        description: "You need some EMV calculations before generating insights. Try calculating some EMV values first!",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsAnalyzing(true);
-    // This would trigger the AI analysis
-    setTimeout(() => {
+    
+    try {
+      const response = await fetch('/api/emv/insights', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ calculations: calculationHistory.calculations })
+      });
+      
+      if (response.ok) {
+        const insightsData = await response.json();
+        setInsights(insightsData);
+        toast({
+          title: "AI Insights Generated",
+          description: "Your personalized EMV insights are ready!",
+        });
+      } else {
+        throw new Error('Failed to generate insights');
+      }
+    } catch (error) {
+      toast({
+        title: "Analysis Failed",
+        description: "Unable to generate insights. Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
       setIsAnalyzing(false);
-    }, 3000);
+    }
   };
 
   return (
