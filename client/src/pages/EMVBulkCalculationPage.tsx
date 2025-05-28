@@ -99,7 +99,7 @@ function validateRow(row: string[], headers: string[]): [boolean, any] {
   const validCreatorSizes = ["brand_fan", "nano", "micro", "mid_tier", "macro", "celebrity"];
   const validContentTopics = ["beauty", "fashion", "fitness", "finance", "food", "game", "music", "travel", "technology", "other"];
 
-  const validPostTypes = {
+  const validPostTypes: { [key: string]: string[] } = {
     "instagram": ["post", "reel", "story"],
     "tiktok": ["video"],
     "youtube": ["video", "shorts"],
@@ -146,8 +146,8 @@ function validateRow(row: string[], headers: string[]): [boolean, any] {
   const platform = rowData["Platform"].toLowerCase();
   const postType = rowData["Post Type"].toLowerCase();
   
-  if (!validPostTypes[platform]?.includes(postType)) {
-    return [false, `Invalid Post Type for ${platform}. Must be one of: ${validPostTypes[platform]?.join(', ')}`];
+  if (!validPostTypes[platform] || !validPostTypes[platform].includes(postType)) {
+    return [false, `Invalid Post Type for ${platform}. Must be one of: ${validPostTypes[platform]?.join(', ') || 'none'}`];
   }
 
   // Require at least Views or Impressions

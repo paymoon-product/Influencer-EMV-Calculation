@@ -2,29 +2,40 @@ import { emvData, FormValues, EMVResult, EMVBreakdownItem } from "./emv-data";
 
 // Get user-customized factors or use defaults from emvData
 function getCustomizedFactors() {
-  // Try to get customized factors from localStorage
-  const savedCreatorFactors = localStorage.getItem("emv-creator-factors");
-  const savedPostTypeFactors = localStorage.getItem("emv-post-type-factors");
-  const savedTopicFactors = localStorage.getItem("emv-topic-factors");
-  const savedBaseValues = localStorage.getItem("emv-base-values");
-  const savedCustomTopics = localStorage.getItem("emv-custom-topics");
+  // Try to get settings from localStorage
+  const savedSettings = localStorage.getItem('emv-settings');
   
-  // Parse custom topics if they exist
-  const customTopics = savedCustomTopics ? JSON.parse(savedCustomTopics) : {};
+  if (savedSettings) {
+    const settings = JSON.parse(savedSettings);
+    
+    // Combine default topic factors with custom topics if available
+    const customTopicsFactors = {};
+    if (settings.customTopics) {
+      settings.customTopics.forEach((topic: {name: string, factor: number}) => {
+        customTopicsFactors[topic.name.toLowerCase()] = topic.factor;
+      });
+    }
+    
+    const topicFactorsCombined = {
+      ...emvData.topicFactors,
+      ...(settings.contentTopicFactors || {}),
+      ...customTopicsFactors
+    };
+    
+    return {
+      creatorFactors: settings.creatorSizeFactors || emvData.creatorFactors,
+      postTypeFactors: settings.postTypeFactors || emvData.postTypeFactors,
+      topicFactors: topicFactorsCombined,
+      baseValues: settings.baseValues || emvData.baseValues
+    };
+  }
   
-  // Combine default topic factors with custom topics
-  const topicFactorsCombined = {
-    ...emvData.topicFactors,
-    ...(savedTopicFactors ? JSON.parse(savedTopicFactors) : {}),
-    ...customTopics
-  };
-  
-  // Return an object with either customized factors or defaults
+  // Return defaults if no settings found
   return {
-    creatorFactors: savedCreatorFactors ? JSON.parse(savedCreatorFactors) : emvData.creatorFactors,
-    postTypeFactors: savedPostTypeFactors ? JSON.parse(savedPostTypeFactors) : emvData.postTypeFactors,
-    topicFactors: topicFactorsCombined,
-    baseValues: savedBaseValues ? JSON.parse(savedBaseValues) : emvData.baseValues
+    creatorFactors: emvData.creatorFactors,
+    postTypeFactors: emvData.postTypeFactors,
+    topicFactors: emvData.topicFactors,
+    baseValues: emvData.baseValues
   };
 }
 
