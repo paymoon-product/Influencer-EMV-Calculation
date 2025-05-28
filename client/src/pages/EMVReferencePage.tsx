@@ -114,15 +114,24 @@ export default function EMVReferencePage() {
 
         <Card>
           <CardContent className="pt-6">
-            <h3 className="text-xl font-semibold mb-4">Base Engagement Values</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(emvData.baseValues).map(([engagement, value]) => (
-                <div key={engagement} className="p-4 border rounded-lg">
-                  <h4 className="font-semibold capitalize mb-2">
-                    {engagement.replace(/([A-Z])/g, ' $1').trim()}
-                  </h4>
-                  <p className="text-2xl font-bold text-primary-600">${value}</p>
-                  <p className="text-sm text-gray-600">Base value per engagement</p>
+            <h3 className="text-xl font-semibold mb-4">Base Engagement Values by Platform</h3>
+            <div className="space-y-4">
+              {Object.entries(emvData.baseValues).map(([platform, postTypes]) => (
+                <div key={platform} className="border rounded-lg p-4">
+                  <h4 className="font-semibold capitalize mb-3 text-lg">{platform}</h4>
+                  {Object.entries(postTypes).map(([postType, engagements]) => (
+                    <div key={postType} className="mb-4">
+                      <h5 className="font-medium capitalize mb-2 text-gray-700">{postType}</h5>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        {Object.entries(engagements).map(([engagement, value]) => (
+                          <div key={engagement} className="text-sm p-2 bg-gray-50 rounded">
+                            <span className="font-medium capitalize">{engagement}:</span>
+                            <span className="text-primary-600 font-semibold ml-1">${value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>

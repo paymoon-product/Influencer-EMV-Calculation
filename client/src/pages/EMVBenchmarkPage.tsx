@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingUp, TrendingDown, Target, Award, BarChart3, Users, Zap, Info, Eye, Download, FileText } from "lucide-react";
+import { TrendingUp, TrendingDown, Target, Award, BarChart3, Users, Zap, Info, Eye, Download, FileText, HelpCircle } from "lucide-react";
 import { MainLayout } from "@/components/MainLayout";
 import { apiRequest } from "@/lib/queryClient";
 import { exportCalculationsToCSV, exportCalculationsToPDF } from "@/lib/export-utils";
@@ -23,6 +23,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface BenchmarkComparison {
   calculation: any;
@@ -244,7 +250,21 @@ export default function EMVBenchmarkPage() {
                             <TableHead>Creator Size</TableHead>
                             <TableHead>Content Topic</TableHead>
                             <TableHead>Total EMV</TableHead>
-                            <TableHead>Actions</TableHead>
+                            <TableHead>
+                              <div className="flex items-center space-x-1">
+                                <span>Actions</span>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <HelpCircle className="h-4 w-4 text-gray-400" />
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Click "Compare" to see how your performance ranks against industry benchmarks</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              </div>
+                            </TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
